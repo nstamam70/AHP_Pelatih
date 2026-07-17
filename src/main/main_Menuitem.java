@@ -58,7 +58,7 @@ public class main_Menuitem extends javax.swing.JPanel {
         lb_icon = new javax.swing.JLabel();
         lb_iconSub = new javax.swing.JLabel();
 
-        setBackground(new java.awt.Color(65, 61, 51));
+        setBackground(new java.awt.Color(1, 30, 60));
         addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 formMouseClicked(evt);

@@ -40,6 +40,27 @@ public class auth_login extends javax.swing.JFrame {
      */
     public auth_login() {
         initComponents();
+
+        // Toggle show/hide password
+        javax.swing.ImageIcon iconHide = new javax.swing.ImageIcon(getClass().getResource("/assets/hide_eyes.png"));
+        javax.swing.ImageIcon iconShow = new javax.swing.ImageIcon(getClass().getResource("/assets/eyes_on.png"));
+        javax.swing.JLabel lblEye = new javax.swing.JLabel(iconHide);
+        lblEye.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblEye.setToolTipText("Show/Hide Password");
+        jPassword.setLayout(new java.awt.BorderLayout());
+        jPassword.add(lblEye, java.awt.BorderLayout.EAST);
+        lblEye.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (jPassword.getEchoChar() == (char) 0) {
+                    jPassword.setEchoChar('\u2022');
+                    lblEye.setIcon(iconHide);
+                } else {
+                    jPassword.setEchoChar((char) 0);
+                    lblEye.setIcon(iconShow);
+                }
+            }
+        });
     }
     
     /**

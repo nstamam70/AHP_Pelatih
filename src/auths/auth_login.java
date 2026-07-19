@@ -8,10 +8,11 @@ package auths;
 
 import java.awt.Color;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import configs.KoneksiDB;
 import main.Main;
 
 
@@ -319,7 +320,7 @@ public class auth_login extends javax.swing.JFrame {
     }//GEN-LAST:event_labelregisMouseEntered
 
     private void lbl_cancelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_cancelMouseClicked
-
+        System.exit(0);
     }//GEN-LAST:event_lbl_cancelMouseClicked
 
     private void lbl_cancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_cancelMouseEntered
@@ -331,7 +332,32 @@ public class auth_login extends javax.swing.JFrame {
     }//GEN-LAST:event_lbl_cancelMouseExited
 
     private void lbl_loginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_loginMouseClicked
+        String username = tUsername.getText();
+        String password = new String(jPassword.getPassword());
 
+        if (username.equals("Username") || username.isEmpty() || password.equals("********") || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Username dan Password harus diisi!");
+            return;
+        }
+
+        try {
+            Connection conn = KoneksiDB.getConnection();
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM user WHERE username = ? AND password = ?");
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                JOptionPane.showMessageDialog(this, "Login Berhasil! Selamat datang " + rs.getString("nama"));
+                Main main = new Main();
+                main.setVisible(true);
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Username atau Password salah!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Koneksi gagal: " + e.getMessage());
+        }
     }//GEN-LAST:event_lbl_loginMouseClicked
 
     private void lbl_loginMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_loginMouseEntered

@@ -4,9 +4,8 @@
  */
 package views.vform;
 
-//import dao.AuditorDAO;
+import dao.PelatihDAO;
 import views.*;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -15,87 +14,60 @@ import javax.swing.table.DefaultTableModel;
  */
 public class vform_datapelatih extends javax.swing.JPanel {
 
-    private int idAuditorTerpilih = -1;
+    private PelatihDAO pelatihDAO = new PelatihDAO();
 
-    /**
-     * Creates new form view_dashboard
-     */
     public vform_datapelatih() {
         initComponents();
-      
-//        loadTableTeknisi();
-//        generateKodeAuditor();
-//        tkode.disable();
+        loadTablePelatih();
     }
 
-//    private void loadTableTeknisi() {
-//
-//        DefaultTableModel model
-//                = new DefaultTableModel();
-//
-//        model.addColumn("ID");
-//        model.addColumn("Kode");
-//        model.addColumn("Nama");
-//        model.addColumn("Jabatan");
-//        model.addColumn("Status");
-//
-//        AuditorDAO dao = new AuditorDAO();
-//
-//        for (models.Auditor t : dao.getAll()) {
-//
-//            model.addRow(new Object[]{
-//                t.getIdAuditor(),
-//                t.getKodeAuditor(),
-//                t.getNamaAuditor(),
-//                t.getJabatan(),
-//                t.getStatus()
-//            });
-//        }
-//
-//        tblauditor.setModel(model);
-//    }
-//
-//    private void generateKodeAuditor() {
-//
-//        AuditorDAO dao = new AuditorDAO();
-//
-//        String kode = dao.generateKode();
-//
-//        tkode.setText(kode);
-//    }
-//    private void cariAuditor(String keyword) {
-//
-//        DefaultTableModel model
-//                = new DefaultTableModel();
-//
-//        model.addColumn("ID");
-//        model.addColumn("Kode");
-//        model.addColumn("Nama");
-//        model.addColumn("Jabatan");
-//        model.addColumn("Status");
-//
-//        AuditorDAO dao = new AuditorDAO();
-//
-//        for (models.Auditor t : dao.search(keyword)) {
-//
-//            model.addRow(new Object[]{
-//                t.getIdAuditor(),
-//                t.getKodeAuditor(),
-//                t.getNamaAuditor(),
-//                t.getJabatan(),
-//                t.getStatus()
-//            });
-//        }
-//
-//        tblauditor.setModel(model);
-//    }
-//    private void resetForm() {
-//        tkode.setText("");
-//        tnama.setText("");
-//        talamat.setText("");
-//        tstatus.setSelectedIndex(0);
-//        tkode.requestFocus();
-//    }
+    private void loadTablePelatih() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("ID");
+        model.addColumn("Kode");
+        model.addColumn("Nama");
+        model.addColumn("Alamat");
+        model.addColumn("No Hp");
+        model.addColumn("Lisensi");
+        model.addColumn("Status");
+
+        for (models.Pelatih p : pelatihDAO.getAll()) {
+            model.addRow(new Object[]{
+                p.getIdPelatih(),
+                p.getKodePelatih(),
+                p.getNamaPelatih(),
+                p.getAlamat(),
+                p.getNoHp(),
+                p.getLisensi(),
+                p.getStatus()
+            });
+        }
+        tblpelatih.setModel(model);
+    }
+
+    private void cariPelatih(String keyword) {
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("ID");
+        model.addColumn("Kode");
+        model.addColumn("Nama");
+        model.addColumn("Alamat");
+        model.addColumn("No Hp");
+        model.addColumn("Lisensi");
+        model.addColumn("Status");
+
+        for (models.Pelatih p : pelatihDAO.search(keyword)) {
+            model.addRow(new Object[]{
+                p.getIdPelatih(),
+                p.getKodePelatih(),
+                p.getNamaPelatih(),
+                p.getAlamat(),
+                p.getNoHp(),
+                p.getLisensi(),
+                p.getStatus()
+            });
+        }
+        tblpelatih.setModel(model);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -211,17 +183,12 @@ public class vform_datapelatih extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tcariKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tcariKeyPressed
-//        String keyword
-//                = tcari.getText().trim();
-//
-//        if (keyword.isEmpty()) {
-//
-//            loadTableTeknisi();
-//
-//        } else {
-//
-//            cariAuditor(keyword);
-//        }
+        String keyword = tcari.getText().trim();
+        if (keyword.isEmpty()) {
+            loadTablePelatih();
+        } else {
+            cariPelatih(keyword);
+        }
     }//GEN-LAST:event_tcariKeyPressed
 
     private void btntambahdataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btntambahdataActionPerformed
@@ -234,33 +201,17 @@ public class vform_datapelatih extends javax.swing.JPanel {
     }//GEN-LAST:event_btntambahdataActionPerformed
 
     private void tblpelatihMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblpelatihMouseClicked
-        //        int row = tblauditor.getSelectedRow();
-        //
-        //        if (row == -1) {
-            //            return;
-            //        }
-        //
-        //
-        //        String kode = tblauditor.getValueAt(row, 1).toString();
-        //
-        //        dao.AuditorDAO dao = new dao.AuditorDAO();
-        //        models.Auditor a = dao.getByKode(kode);
-        //
-        //        if (a != null) {
-            //
-            //            idAuditorTerpilih = a.getIdAuditor();
-            //
-            //            // Set data ke komponen form Anda
-            //            tkode.setText(a.getKodeAuditor());
-            //            tnama.setText(a.getNamaAuditor());
-            //            tjabatan.setText(a.getJabatan());
-            //            tstatus.setSelectedItem(a.getStatus());
-            //        }
-        //
-        //        btnsimpan.setVisible(false);
-    }//GEN-LAST:event_tblpelatihMouseClicked
+        int row = tblpelatih.getSelectedRow();
+        if (row == -1) return;
 
-///
+        String kode = tblpelatih.getValueAt(row, 1).toString();
+
+        javax.swing.JPanel parent = (javax.swing.JPanel) this.getParent();
+        parent.removeAll();
+        parent.add(new view_datapelatih(kode));
+        parent.revalidate();
+        parent.repaint();
+    }//GEN-LAST:event_tblpelatihMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btntambahdata;

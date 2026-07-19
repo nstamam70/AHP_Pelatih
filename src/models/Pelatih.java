@@ -6,7 +6,7 @@ public class Pelatih {
     private String kodePelatih;
     private String namaPelatih;
     private String alamat;
-    private String noTelp;
+    private String noHp;
     private String lisensi;
     private String status;
 
@@ -22,8 +22,8 @@ public class Pelatih {
     public String getAlamat() { return alamat; }
     public void setAlamat(String alamat) { this.alamat = alamat; }
 
-    public String getNoTelp() { return noTelp; }
-    public void setNoTelp(String noTelp) { this.noTelp = noTelp; }
+    public String getNoHp() { return noHp; }
+    public void setNoHp(String noHp) { this.noHp = noHp; }
 
     public String getLisensi() { return lisensi; }
     public void setLisensi(String lisensi) { this.lisensi = lisensi; }

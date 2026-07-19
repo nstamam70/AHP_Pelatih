@@ -22,7 +22,7 @@ public class PelatihDAO {
                 p.setKodePelatih(rs.getString("kode_pelatih"));
                 p.setNamaPelatih(rs.getString("nama_pelatih"));
                 p.setAlamat(rs.getString("alamat"));
-                p.setNoTelp(rs.getString("no_telp"));
+                p.setNoHp(rs.getString("no_hp"));
                 p.setLisensi(rs.getString("lisensi"));
                 p.setStatus(rs.getString("status"));
                 list.add(p);
@@ -48,7 +48,7 @@ public class PelatihDAO {
                 p.setKodePelatih(rs.getString("kode_pelatih"));
                 p.setNamaPelatih(rs.getString("nama_pelatih"));
                 p.setAlamat(rs.getString("alamat"));
-                p.setNoTelp(rs.getString("no_telp"));
+                p.setNoHp(rs.getString("no_hp"));
                 p.setLisensi(rs.getString("lisensi"));
                 p.setStatus(rs.getString("status"));
                 list.add(p);
@@ -71,7 +71,7 @@ public class PelatihDAO {
                 p.setKodePelatih(rs.getString("kode_pelatih"));
                 p.setNamaPelatih(rs.getString("nama_pelatih"));
                 p.setAlamat(rs.getString("alamat"));
-                p.setNoTelp(rs.getString("no_telp"));
+                p.setNoHp(rs.getString("no_hp"));
                 p.setLisensi(rs.getString("lisensi"));
                 p.setStatus(rs.getString("status"));
                 return p;
@@ -83,13 +83,13 @@ public class PelatihDAO {
     }
 
     public boolean insert(Pelatih p) {
-        String sql = "INSERT INTO pelatih (kode_pelatih, nama_pelatih, alamat, no_telp, lisensi, status) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO pelatih (kode_pelatih, nama_pelatih, alamat, no_hp, lisensi, status) VALUES (?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, p.getKodePelatih());
             ps.setString(2, p.getNamaPelatih());
             ps.setString(3, p.getAlamat());
-            ps.setString(4, p.getNoTelp());
+            ps.setString(4, p.getNoHp());
             ps.setString(5, p.getLisensi());
             ps.setString(6, p.getStatus());
             return ps.executeUpdate() > 0;
@@ -100,13 +100,13 @@ public class PelatihDAO {
     }
 
     public boolean update(Pelatih p) {
-        String sql = "UPDATE pelatih SET kode_pelatih=?, nama_pelatih=?, alamat=?, no_telp=?, lisensi=?, status=? WHERE id_pelatih=?";
+        String sql = "UPDATE pelatih SET kode_pelatih=?, nama_pelatih=?, alamat=?, no_hp=?, lisensi=?, status=? WHERE id_pelatih=?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, p.getKodePelatih());
             ps.setString(2, p.getNamaPelatih());
             ps.setString(3, p.getAlamat());
-            ps.setString(4, p.getNoTelp());
+            ps.setString(4, p.getNoHp());
             ps.setString(5, p.getLisensi());
             ps.setString(6, p.getStatus());
             ps.setInt(7, p.getIdPelatih());

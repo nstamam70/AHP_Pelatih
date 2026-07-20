@@ -5,6 +5,7 @@
 package views.vform;
 
 //import dao.AuditorDAO;
+import dao.KriteriaDAO;
 import views.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -22,79 +23,56 @@ public class vform_datakriteria extends javax.swing.JPanel {
      */
     public vform_datakriteria() {
         initComponents();
-//        loadTableTeknisi();
-//        generateKodeAuditor();
-//        tkode.disable();
+        LoadTableKriteria();
     }
 
-//    private void loadTableTeknisi() {
-//
-//        DefaultTableModel model
-//                = new DefaultTableModel();
-//
-//        model.addColumn("ID");
-//        model.addColumn("Kode");
-//        model.addColumn("Nama");
-//        model.addColumn("Jabatan");
-//        model.addColumn("Status");
-//
-//        AuditorDAO dao = new AuditorDAO();
-//
-//        for (models.Auditor t : dao.getAll()) {
-//
-//            model.addRow(new Object[]{
-//                t.getIdAuditor(),
-//                t.getKodeAuditor(),
-//                t.getNamaAuditor(),
-//                t.getJabatan(),
-//                t.getStatus()
-//            });
-//        }
-//
-//        tblauditor.setModel(model);
-//    }
-//
-//    private void generateKodeAuditor() {
-//
-//        AuditorDAO dao = new AuditorDAO();
-//
-//        String kode = dao.generateKode();
-//
-//        tkode.setText(kode);
-//    }
-//    private void cariAuditor(String keyword) {
-//
-//        DefaultTableModel model
-//                = new DefaultTableModel();
-//
-//        model.addColumn("ID");
-//        model.addColumn("Kode");
-//        model.addColumn("Nama");
-//        model.addColumn("Jabatan");
-//        model.addColumn("Status");
-//
-//        AuditorDAO dao = new AuditorDAO();
-//
-//        for (models.Auditor t : dao.search(keyword)) {
-//
-//            model.addRow(new Object[]{
-//                t.getIdAuditor(),
-//                t.getKodeAuditor(),
-//                t.getNamaAuditor(),
-//                t.getJabatan(),
-//                t.getStatus()
-//            });
-//        }
-//
-//        tblauditor.setModel(model);
-//    }
-//    private void resetForm() {
-//        tkode.setText("");
-//        tnama.setText("");
-//        talamat.setText("");
-//        tstatus.setSelectedIndex(0);
-//        tkode.requestFocus();
-//    }
+    private void LoadTableKriteria() {
+
+        DefaultTableModel model
+                = new DefaultTableModel();
+
+        model.addColumn("ID");
+        model.addColumn("Kode");
+        model.addColumn("Nama");
+
+        KriteriaDAO dao = new KriteriaDAO();
+
+        for (models.Kriteria t : dao.getAll()) {
+
+            model.addRow(new Object[]{
+                t.getIdKriteria(),
+                t.getKodeKriteria(),
+                t.getNamaKriteria(),
+            });
+        }
+
+        tblkriteria.setModel(model);
+    }
+
+    private void cariAuditor(String keyword) {
+
+        DefaultTableModel model
+                = new DefaultTableModel();
+
+        model.addColumn("ID");
+        model.addColumn("Kode");
+        model.addColumn("Nama");
+        model.addColumn("Jabatan");
+        model.addColumn("Status");
+
+        KriteriaDAO dao = new KriteriaDAO();
+
+        for (models.Kriteria t : dao.search(keyword)) {
+
+            model.addRow(new Object[]{
+                t.getIdKriteria(),
+                t.getKodeKriteria(),
+                t.getNamaKriteria(),
+            });
+        }
+
+        tblkriteria.setModel(model);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

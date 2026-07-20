@@ -5,6 +5,9 @@
 package views.vform;
 
 //import dao.AuditorDAO;
+import dao.SubKriteriaDAO;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import views.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -22,37 +25,47 @@ public class vform_datasubkriteria extends javax.swing.JPanel {
      */
     public vform_datasubkriteria() {
         initComponents();
-//        loadTableTeknisi();
+        LoadTableSubKriteria();
 //        generateKodeAuditor();
 //        tkode.disable();
     }
 
-//    private void loadTableTeknisi() {
-//
-//        DefaultTableModel model
-//                = new DefaultTableModel();
-//
-//        model.addColumn("ID");
-//        model.addColumn("Kode");
-//        model.addColumn("Nama");
-//        model.addColumn("Jabatan");
-//        model.addColumn("Status");
-//
-//        AuditorDAO dao = new AuditorDAO();
-//
-//        for (models.Auditor t : dao.getAll()) {
-//
-//            model.addRow(new Object[]{
-//                t.getIdAuditor(),
-//                t.getKodeAuditor(),
-//                t.getNamaAuditor(),
-//                t.getJabatan(),
-//                t.getStatus()
-//            });
-//        }
-//
-//        tblauditor.setModel(model);
-//    }
+    private void LoadTableSubKriteria() {
+
+        DefaultTableModel model = new DefaultTableModel();
+
+        model.addColumn("ID Sub");
+        model.addColumn("ID Kriteria");
+        model.addColumn("Nama Kriteria");
+        model.addColumn("Kode Sub");
+        model.addColumn("Nama Sub");
+        model.addColumn("Bobot");
+
+        SubKriteriaDAO dao = new SubKriteriaDAO();
+
+        try {
+
+            ResultSet rs = dao.getDataSubkriteria();
+
+            while (rs != null && rs.next()) {
+
+                model.addRow(new Object[]{
+                    rs.getInt("id_sub"),
+                    rs.getInt("id_kriteria"),
+                    rs.getString("nama_kriteria"),
+                    rs.getString("kode_sub"),
+                    rs.getString("nama_sub"),
+                    rs.getDouble("bobot")
+                });
+
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error Load Table SubKriteria : " + e.getMessage());
+        }
+
+        tblsubkriteria.setModel(model);
+    }
 //
 //    private void generateKodeAuditor() {
 //
@@ -95,6 +108,7 @@ public class vform_datasubkriteria extends javax.swing.JPanel {
 //        tstatus.setSelectedIndex(0);
 //        tkode.requestFocus();
 //    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

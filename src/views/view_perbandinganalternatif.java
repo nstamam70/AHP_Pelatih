@@ -4,15 +4,13 @@
  */
 package views;
 
-//import dao.AuditorDAO;
-//import dao.KriteriaDAO;
-//import dao.PerbandinganDAO;
-//import java.util.List;
-//import javax.swing.JOptionPane;
-//import javax.swing.table.DefaultTableModel;
-//import models.Auditor;
-//import models.Kriteria;
-//import utils.AHPCalculator;
+import dao.KriteriaDAO;
+import dao.PelatihDAO;
+import dao.SubKriteriaDAO;
+import java.util.List;
+import models.Kriteria;
+import models.Pelatih;
+import models.SubKriteria;
 
 /**
  *
@@ -25,21 +23,81 @@ public class view_perbandinganalternatif extends javax.swing.JPanel {
 //    private PerbandinganDAO perbandinganDAO;
 //    private List<Kriteria> kriteriaList;
 //    private List<Auditor> auditorList;
-
     /**
      * Creates new form view_dashboard
      */
     public view_perbandinganalternatif() {
         initComponents();
+
 //        kriteriaDAO = new KriteriaDAO();
 //        auditorDAO = new AuditorDAO();
 //        perbandinganDAO = new PerbandinganDAO();
-//        loadData();
-//        loadNilaiComboBox();
+        loadData();
+        loadNilaiComboBox();
 //        addButtonListeners();
 //        refreshTabel();
     }
+
+    private void loadData() {
+
+        PelatihDAO pelatihDAO = new PelatihDAO();
+        KriteriaDAO kriteriaDAO = new KriteriaDAO();
+        SubKriteriaDAO subDAO = new SubKriteriaDAO();
+
+        pelatihDAO.loadPelatihToComboBox(tnama);
+        kriteriaDAO.loadKriteriaToComboBox1(tkriteria1);
+        subDAO.loadSubKriteriaToComboBox(tkriteria2);
+
+    }
+
+     private void loadNilaiComboBox() {
+        tnilai.removeAllItems();
+        tnilai.addItem("1 - Sama Penting");
+        tnilai.addItem("2 - Mendekati Sedikit Lebih Penting");
+        tnilai.addItem("3 - Sedikit Lebih Penting");
+        tnilai.addItem("4 - Mendekati Lebih Penting");
+        tnilai.addItem("5 - Lebih Penting");
+        tnilai.addItem("6 - Mendekati Sangat Penting");
+        tnilai.addItem("7 - Sangat Penting");
+        tnilai.addItem("8 - Mendekati Mutlak Lebih Penting");
+        tnilai.addItem("9 - Mutlak Lebih Penting");
+        tnilai.addItem("1/2 - Mendekati Sama Penting (kebalikan)");
+        tnilai.addItem("1/3 - Sedikit Kurang Penting (kebalikan)");
+        tnilai.addItem("1/4 - Mendekati Kurang Penting (kebalikan)");
+        tnilai.addItem("1/5 - Kurang Penting (kebalikan)");
+        tnilai.addItem("1/6 - Mendekati Sangat Kurang Penting (kebalikan)");
+        tnilai.addItem("1/7 - Sangat Kurang Penting (kebalikan)");
+        tnilai.addItem("1/8 - Mendekati Mutlak Kurang Penting (kebalikan)");
+        tnilai.addItem("1/9 - Mutlak Kurang Penting (kebalikan)");
+    }
 //
+//    private void loadSubKriteria() {
+//        Kriteria kriteriaTerpilih = (Kriteria) tkriteria.getSelectedItem();
+//        tsub.removeAllItems();
+//
+//        if (kriteriaTerpilih == null) {
+//            return;
+//        }
+//
+//        List<SubKriteria> subList = SubKriteriaDAO.getByKriteria(kriteriaTerpilih.getIdKriteria());
+//        for (SubKriteria sk : subList) {
+//            tsub.addItem(sk);
+//        }
+//    }
+
+//    private void loadSubKriteria() {
+//        Kriteria kriteriaTerpilih = (Kriteria) tkriteria.getSelectedItem();
+//        tsub.removeAllItems();
+//
+//        if (kriteriaTerpilih == null) {
+//            return;
+//        }
+//
+//        List<SubKriteria> subList = SubKriteriaDAO.getByKriteria(kriteriaTerpilih.getIdKriteria());
+//        for (SubKriteria sk : subList) {
+//            tsub.addItem(sk);
+//        }
+//    }
 //    private void loadData() {
 //        kriteriaList = kriteriaDAO.getAll();
 //        auditorList = auditorDAO.getAll();
@@ -65,26 +123,7 @@ public class view_perbandinganalternatif extends javax.swing.JPanel {
 //        tnama.addActionListener(e -> refreshTabel());
 //    }
 //
-//    private void loadNilaiComboBox() {
-//        tnilai.removeAllItems();
-//        tnilai.addItem("1 - Sama Penting");
-//        tnilai.addItem("2 - Mendekati Sedikit Lebih Penting");
-//        tnilai.addItem("3 - Sedikit Lebih Penting");
-//        tnilai.addItem("4 - Mendekati Lebih Penting");
-//        tnilai.addItem("5 - Lebih Penting");
-//        tnilai.addItem("6 - Mendekati Sangat Penting");
-//        tnilai.addItem("7 - Sangat Penting");
-//        tnilai.addItem("8 - Mendekati Mutlak Lebih Penting");
-//        tnilai.addItem("9 - Mutlak Lebih Penting");
-//        tnilai.addItem("1/2 - Mendekati Sama Penting (kebalikan)");
-//        tnilai.addItem("1/3 - Sedikit Kurang Penting (kebalikan)");
-//        tnilai.addItem("1/4 - Mendekati Kurang Penting (kebalikan)");
-//        tnilai.addItem("1/5 - Kurang Penting (kebalikan)");
-//        tnilai.addItem("1/6 - Mendekati Sangat Kurang Penting (kebalikan)");
-//        tnilai.addItem("1/7 - Sangat Kurang Penting (kebalikan)");
-//        tnilai.addItem("1/8 - Mendekati Mutlak Kurang Penting (kebalikan)");
-//        tnilai.addItem("1/9 - Mutlak Kurang Penting (kebalikan)");
-//    }
+   
 //
 //    private double parseNilai() {
 //        String selected = (String) tnilai.getSelectedItem();
@@ -197,7 +236,6 @@ public class view_perbandinganalternatif extends javax.swing.JPanel {
 //        }
 //        tblnormalisasialternatif.setModel(new DefaultTableModel(dataNorm, headerNorm));
 //    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -234,10 +272,10 @@ public class view_perbandinganalternatif extends javax.swing.JPanel {
         jLabel1.setText("Perbandingan Alternatif");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
-        jLabel3.setText("Kriteria 1");
+        jLabel3.setText("Kriteria");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
-        jLabel4.setText("Kriteria 2");
+        jLabel4.setText("SubKriteria");
 
         jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
         jLabel5.setText("Nilai");
@@ -250,6 +288,11 @@ public class view_perbandinganalternatif extends javax.swing.JPanel {
 
         btnsimpan.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
         btnsimpan.setText("Simpan");
+        btnsimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnsimpanActionPerformed(evt);
+            }
+        });
 
         btnubah.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
         btnubah.setText("Ubah");
@@ -384,6 +427,10 @@ public class view_perbandinganalternatif extends javax.swing.JPanel {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnsimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsimpanActionPerformed
+
+    }//GEN-LAST:event_btnsimpanActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

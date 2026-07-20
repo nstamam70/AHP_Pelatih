@@ -5,6 +5,11 @@
 package views;
 //
 //import dao.KriteriaDAO;
+
+import dao.KriteriaDAO;
+import dao.PelatihDAO;
+import dao.SubKriteriaDAO;
+
 //import dao.PerbandinganDAO;
 //import java.util.List;
 //import javax.swing.JOptionPane;
@@ -29,45 +34,42 @@ public class view_perbandingankriteria extends javax.swing.JPanel {
         initComponents();
 //        kriteriaDAO = new KriteriaDAO();
 //        perbandinganDAO = new PerbandinganDAO();
-//        loadKriteria();
-//        loadNilaiComboBox();
+        loadNilaiComboBox();
 //        addButtonListeners();
 //        refreshTabel();
+loadData();
     }
-//
-//    private void loadKriteria() {
-//        kriteriaList = kriteriaDAO.getAll();
-//        tkriteria1.removeAllItems();
-//        tkriteria2.removeAllItems();
-//        for (Kriteria k : kriteriaList) {
-//            tkriteria1.addItem(k.getKodeKriteria() + " - " + k.getNamaKriteria());
-//            tkriteria2.addItem(k.getKodeKriteria() + " - " + k.getNamaKriteria());
-//        }
-//        if (tkriteria2.getItemCount() > 1) {
-//            tkriteria2.setSelectedIndex(1);
-//        }
-//    }
-//
-//    private void loadNilaiComboBox() {
-//        tnilai.removeAllItems();
-//        tnilai.addItem("1 - Sama Penting");
-//        tnilai.addItem("2 - Mendekati Sedikit Lebih Penting");
-//        tnilai.addItem("3 - Sedikit Lebih Penting");
-//        tnilai.addItem("4 - Mendekati Lebih Penting");
-//        tnilai.addItem("5 - Lebih Penting");
-//        tnilai.addItem("6 - Mendekati Sangat Penting");
-//        tnilai.addItem("7 - Sangat Penting");
-//        tnilai.addItem("8 - Mendekati Mutlak Lebih Penting");
-//        tnilai.addItem("9 - Mutlak Lebih Penting");
-//        tnilai.addItem("1/2 - Mendekati Sama Penting (kebalikan)");
-//        tnilai.addItem("1/3 - Sedikit Kurang Penting (kebalikan)");
-//        tnilai.addItem("1/4 - Mendekati Kurang Penting (kebalikan)");
-//        tnilai.addItem("1/5 - Kurang Penting (kebalikan)");
-//        tnilai.addItem("1/6 - Mendekati Sangat Kurang Penting (kebalikan)");
-//        tnilai.addItem("1/7 - Sangat Kurang Penting (kebalikan)");
-//        tnilai.addItem("1/8 - Mendekati Mutlak Kurang Penting (kebalikan)");
-//        tnilai.addItem("1/9 - Mutlak Kurang Penting (kebalikan)");
-//    }
+
+        private void loadData() {
+
+        KriteriaDAO kriteriaDAO = new KriteriaDAO();
+        
+
+        kriteriaDAO.loadKriteriaToComboBox1(tkriteria1);
+        kriteriaDAO.loadKriteriaToComboBox1(tkriteria2);
+
+    }
+
+    private void loadNilaiComboBox() {
+        tnilai.removeAllItems();
+        tnilai.addItem("1 - Sama Penting");
+        tnilai.addItem("2 - Mendekati Sedikit Lebih Penting");
+        tnilai.addItem("3 - Sedikit Lebih Penting");
+        tnilai.addItem("4 - Mendekati Lebih Penting");
+        tnilai.addItem("5 - Lebih Penting");
+        tnilai.addItem("6 - Mendekati Sangat Penting");
+        tnilai.addItem("7 - Sangat Penting");
+        tnilai.addItem("8 - Mendekati Mutlak Lebih Penting");
+        tnilai.addItem("9 - Mutlak Lebih Penting");
+        tnilai.addItem("1/2 - Mendekati Sama Penting (kebalikan)");
+        tnilai.addItem("1/3 - Sedikit Kurang Penting (kebalikan)");
+        tnilai.addItem("1/4 - Mendekati Kurang Penting (kebalikan)");
+        tnilai.addItem("1/5 - Kurang Penting (kebalikan)");
+        tnilai.addItem("1/6 - Mendekati Sangat Kurang Penting (kebalikan)");
+        tnilai.addItem("1/7 - Sangat Kurang Penting (kebalikan)");
+        tnilai.addItem("1/8 - Mendekati Mutlak Kurang Penting (kebalikan)");
+        tnilai.addItem("1/9 - Mutlak Kurang Penting (kebalikan)");
+    }
 //
 //    private double parseNilai() {
 //        String selected = (String) tnilai.getSelectedItem();

@@ -5,8 +5,18 @@
 package views;
 
 //import dao.KriteriaDAO;
+import dao.KriteriaDAO;
+import dao.SubKriteriaDAO;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import models.ItemKriteria;
+import models.Kriteria;
+import models.SubKriteria;
+import views.vform.vform_datasubkriteria;
 
 /**
  *
@@ -21,68 +31,93 @@ public class view_datasubkriteria extends javax.swing.JPanel {
      */
     public view_datasubkriteria() {
         initComponents();
-//        LoadTableKriteria();
-//        generateKodeKriteria();
+        LoadTableSubKriteria();
+        KriteriaDAO dao = new KriteriaDAO();
+        dao.loadKriteriaToComboBox(tkriteria);
+        generateKodeSubKriteria();
         tkode.disable();
     }
 
-//    private void LoadTableKriteria() {
-//
-//        DefaultTableModel model
-//                = new DefaultTableModel();
-//
-//        model.addColumn("ID");
-//        model.addColumn("Kode");
-//        model.addColumn("Nama");
-//
-//        KriteriaDAO dao = new KriteriaDAO();
-//
-//        for (models.Kriteria t : dao.getAll()) {
-//
-//            model.addRow(new Object[]{
-//                t.getIdKriteria(),
-//                t.getKodeKriteria(),
-//                t.getNamaKriteria(),});
-//        }
-//
-//        tblkriteria.setModel(model);
-//    }
-//
-//    private void generateKodeKriteria() {
-//
-//        KriteriaDAO dao = new KriteriaDAO();
-//
-//        String kode = dao.generateKode();
-//
-//        tkode.setText(kode);
-//    }
-//
-//    private void cariKriteria(String keyword) {
-//
-//        DefaultTableModel model
-//                = new DefaultTableModel();
-//
-//        model.addColumn("ID");
-//        model.addColumn("Kode");
-//        model.addColumn("Nama");
-//
-//        KriteriaDAO dao = new KriteriaDAO();
-//
-//        for (models.Kriteria t : dao.search(keyword)) {
-//
-//            model.addRow(new Object[]{
-//                t.getIdKriteria(),
-//                t.getKodeKriteria(),
-//                t.getNamaKriteria(),});
-//        }
-//
-//        tblkriteria.setModel(model);
-//    }
+    private void cariKriteria(String keyword) {
+
+        DefaultTableModel model = new DefaultTableModel();
+
+        model.addColumn("ID Sub");
+        model.addColumn("ID Kriteria");
+        model.addColumn("Nama Kriteria");
+        model.addColumn("Kode Sub");
+        model.addColumn("Nama Sub");
+        model.addColumn("Bobot");
+
+        SubKriteriaDAO dao = new SubKriteriaDAO();
+
+        for (SubKriteria sub : dao.search(keyword)) {
+
+            model.addRow(new Object[]{
+                sub.getIdSub(),
+                sub.getIdKriteria(),
+                sub.getNamaKriteria(),
+                sub.getKodeSub(),
+                sub.getNamaSub(),
+                sub.getBobot()
+            });
+        }
+
+        tblkriteria.setModel(model);
+    }
+
+    private void LoadTableSubKriteria() {
+
+        DefaultTableModel model = new DefaultTableModel();
+
+        model.addColumn("ID Sub");
+        model.addColumn("ID Kriteria");
+        model.addColumn("Nama Kriteria");
+        model.addColumn("Kode Sub");
+        model.addColumn("Nama Sub");
+        model.addColumn("Bobot");
+
+        SubKriteriaDAO dao = new SubKriteriaDAO();
+
+        try {
+
+            ResultSet rs = dao.getDataSubkriteria();
+
+            while (rs != null && rs.next()) {
+
+                model.addRow(new Object[]{
+                    rs.getInt("id_sub"),
+                    rs.getInt("id_kriteria"),
+                    rs.getString("nama_kriteria"),
+                    rs.getString("kode_sub"),
+                    rs.getString("nama_sub"),
+                    rs.getDouble("bobot")
+                });
+
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error Load Table : " + e.getMessage());
+        }
+
+        tblkriteria.setModel(model);
+    }
+
+    private void generateKodeSubKriteria() {
+
+        SubKriteriaDAO dao = new SubKriteriaDAO();
+
+        String kode = dao.generateKode();
+
+        tkode.setText(kode);
+    }
 
     private void resetForm() {
 
         tkode.setText("");
-        tnama.setText("");
+        tkriteria.setSelectedIndex(0);
+        tsubkriteria.setText("");
+        tbobot.setText("");
         tkode.requestFocus();
     }
 
@@ -107,17 +142,18 @@ public class view_datasubkriteria extends javax.swing.JPanel {
         jLabel4 = new javax.swing.JLabel();
         tkode = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        tnama = new javax.swing.JTextField();
         btnsimpan = new javax.swing.JButton();
         btnubah = new javax.swing.JButton();
         btnhapus = new javax.swing.JButton();
         btnbatal = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JSeparator();
         jSeparator4 = new javax.swing.JSeparator();
-        tnama1 = new javax.swing.JTextField();
+        tsubkriteria = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         tbobot = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        tkriteria = new javax.swing.JComboBox<>();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -127,6 +163,7 @@ public class view_datasubkriteria extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel2.setText("Cari");
 
+        tcari.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         tcari.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 tcariKeyPressed(evt);
@@ -162,8 +199,6 @@ public class view_datasubkriteria extends javax.swing.JPanel {
         jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
         jLabel5.setText("Kriteria");
 
-        tnama.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
-
         btnsimpan.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
         btnsimpan.setText("Simpan");
         btnsimpan.addActionListener(new java.awt.event.ActionListener() {
@@ -196,7 +231,7 @@ public class view_datasubkriteria extends javax.swing.JPanel {
             }
         });
 
-        tnama1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
+        tsubkriteria.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
 
         jLabel6.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
         jLabel6.setText("Sub ");
@@ -205,6 +240,17 @@ public class view_datasubkriteria extends javax.swing.JPanel {
 
         jLabel7.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
         jLabel7.setText("Bobot");
+
+        jButton1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
+        jButton1.setText("Kembali");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        tkriteria.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
+        tkriteria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Pilih Kriteria--" }));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -242,9 +288,9 @@ public class view_datasubkriteria extends javax.swing.JPanel {
                                             .addComponent(jLabel5))
                                         .addGap(82, 82, 82)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(tnama1, javax.swing.GroupLayout.DEFAULT_SIZE, 919, Short.MAX_VALUE)
+                                            .addComponent(tsubkriteria, javax.swing.GroupLayout.DEFAULT_SIZE, 919, Short.MAX_VALUE)
                                             .addComponent(tkode)
-                                            .addComponent(tnama, javax.swing.GroupLayout.DEFAULT_SIZE, 919, Short.MAX_VALUE)))
+                                            .addComponent(tkriteria, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                                     .addComponent(jLabel6)
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
@@ -253,18 +299,21 @@ public class view_datasubkriteria extends javax.swing.JPanel {
                                             .addComponent(tbobot, javax.swing.GroupLayout.DEFAULT_SIZE, 919, Short.MAX_VALUE))
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                             .addGap(158, 158, 158)
-                                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                                .addComponent(jSeparator4, javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jSeparator3, javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addComponent(jSeparator3)
+                                                .addGroup(jPanel1Layout.createSequentialGroup()
                                                     .addComponent(btnsimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                     .addComponent(btnubah, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                     .addComponent(btnhapus, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                    .addComponent(btnbatal, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))))))))))
-                .addContainerGap(102, Short.MAX_VALUE))
+                                                    .addComponent(btnbatal, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(jButton1))
+                                                .addComponent(jSeparator4))
+                                            .addGap(0, 0, Short.MAX_VALUE))))))))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -290,11 +339,11 @@ public class view_datasubkriteria extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(tnama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tkriteria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(tnama1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tsubkriteria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tbobot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -306,10 +355,11 @@ public class view_datasubkriteria extends javax.swing.JPanel {
                     .addComponent(btnsimpan)
                     .addComponent(btnubah)
                     .addComponent(btnhapus)
-                    .addComponent(btnbatal))
+                    .addComponent(btnbatal)
+                    .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(56, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -324,146 +374,257 @@ public class view_datasubkriteria extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        javax.swing.JPanel parent = (javax.swing.JPanel) this.getParent();
+
+        parent.removeAll();
+        parent.add(new vform_datasubkriteria());
+        parent.revalidate();
+        parent.repaint();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btnbatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbatalActionPerformed
+
+        resetForm();
+        generateKodeSubKriteria();
+        btnsimpan.setVisible(true);
+    }//GEN-LAST:event_btnbatalActionPerformed
+
+    private void btnhapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnhapusActionPerformed
+        //// 1. Cek apakah ada data yang dipilih dari tabel
+        //        if (idKriteriaTerpilih == -1) {
+        //            JOptionPane.showMessageDialog(this, "Pilih data kriteria yang ingin dihapus dari tabel terlebih dahulu!");
+        //            return;
+        //        }
+        //
+        //        // 2. Konfirmasi hapus
+        //        int konfirmasi = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus kriteria ini?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
+        //
+        //        if (konfirmasi == JOptionPane.YES_OPTION) {
+        //            // 3. Eksekusi hapus lewat DAO
+        //            dao.KriteriaDAO daoKriteria = new dao.KriteriaDAO();
+        //            boolean berhasil = daoKriteria.delete(idKriteriaTerpilih);
+        //
+        //            if (berhasil) {
+        //                JOptionPane.showMessageDialog(this, "Data Kriteria berhasil dihapus!");
+        //                idKriteriaTerpilih = -1; // Reset ID
+        //                resetForm();
+        //                 LoadTableKriteria();
+        //                 generateKodeKriteria();
+        //            } else {
+        //                JOptionPane.showMessageDialog(this, "Gagal menghapus data Kriteria.");
+        //            }
+        //        }
+    }//GEN-LAST:event_btnhapusActionPerformed
+
+    private void btnubahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnubahActionPerformed
+        if (idKriteriaTerpilih == 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Silakan pilih data yang akan diubah!",
+                    "Peringatan",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (tkriteria.getSelectedItem()
+                == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Silakan pilih kriteria!",
+                    "Peringatan",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+
+            double bobot = Double.parseDouble(tbobot.getText());
+
+            Kriteria kriteria = (Kriteria) tkriteria.getSelectedItem();
+
+            SubKriteria sub = new SubKriteria();
+
+            sub.setIdSub(idKriteriaTerpilih);
+            sub.setIdKriteria(kriteria.getIdKriteria());
+            sub.setKodeSub(tkode.getText().trim());
+            sub.setNamaSub(tsubkriteria.getText().trim());
+            sub.setBobot(bobot);
+
+            SubKriteriaDAO dao = new SubKriteriaDAO();
+
+            if (dao.update(sub)) {
+
+                JOptionPane.showMessageDialog(this,
+                        "Data berhasil diubah.");
+                resetForm();
+                LoadTableSubKriteria();
+                btnsimpan.setVisible(true);
+                generateKodeSubKriteria();
+                idKriteriaTerpilih = 0;
+                tkode.disable();
+
+            } else {
+
+                JOptionPane.showMessageDialog(this,
+                        "Data gagal diubah.");
+
+            }
+
+        } catch (NumberFormatException e) {
+
+            JOptionPane.showMessageDialog(this,
+                    "Bobot harus berupa angka!");
+
+            tbobot.requestFocus();
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(this,
+                    e.getMessage());
+        }
+
+    }//GEN-LAST:event_btnubahActionPerformed
+
+    private void btnsimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsimpanActionPerformed
+        // Validasi Kriteria
+        if (tkriteria.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Silakan pilih Kriteria!",
+                    "Peringatan",
+                    JOptionPane.WARNING_MESSAGE);
+            tkriteria.requestFocus();
+            return;
+        }
+
+        // Validasi Kode Sub
+        if (tkode.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Kode Sub Kriteria tidak boleh kosong!",
+                    "Peringatan",
+                    JOptionPane.WARNING_MESSAGE);
+            tkode.requestFocus();
+            return;
+        }
+
+        // Validasi Nama Sub
+        if (tsubkriteria.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Nama Sub Kriteria tidak boleh kosong!",
+                    "Peringatan",
+                    JOptionPane.WARNING_MESSAGE);
+            tsubkriteria.requestFocus();
+            return;
+        }
+
+        // Validasi Bobot
+        if (tbobot.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Bobot tidak boleh kosong!",
+                    "Peringatan",
+                    JOptionPane.WARNING_MESSAGE);
+            tbobot.requestFocus();
+            return;
+        }
+
+        double bobot;
+
+        try {
+            bobot = Double.parseDouble(tbobot.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Bobot harus berupa angka!",
+                    "Peringatan",
+                    JOptionPane.WARNING_MESSAGE);
+            tbobot.requestFocus();
+            return;
+        }
+
+        try {
+
+            Kriteria kriteria = (Kriteria) tkriteria.getSelectedItem();
+
+            SubKriteria sub = new SubKriteria();
+            sub.setIdKriteria(kriteria.getIdKriteria());
+            sub.setKodeSub(tkode.getText().trim());
+            sub.setNamaSub(tsubkriteria.getText().trim());
+            sub.setBobot(bobot);
+
+            SubKriteriaDAO dao = new SubKriteriaDAO();
+
+            if (dao.insert(sub)) {
+
+                JOptionPane.showMessageDialog(this,
+                        "Data Sub Kriteria berhasil disimpan.");
+                resetForm();
+                LoadTableSubKriteria();
+                generateKodeSubKriteria();
+
+            } else {
+
+                JOptionPane.showMessageDialog(this,
+                        "Data Sub Kriteria gagal disimpan.");
+
+            }
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(this,
+                    "Terjadi kesalahan : " + e.getMessage());
+
+        }
+    }//GEN-LAST:event_btnsimpanActionPerformed
+
+    private void tblkriteriaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblkriteriaMouseClicked
+        int row = tblkriteria.getSelectedRow();
+
+        if (row == -1) {
+            return;
+        }
+
+        String kodeSub = tblkriteria.getValueAt(row, 3).toString();
+
+        SubKriteriaDAO dao = new SubKriteriaDAO();
+        SubKriteria sub = dao.getByKode(kodeSub);
+
+        if (sub != null) {
+
+            idKriteriaTerpilih = sub.getIdSub();
+
+            tkode.setText(sub.getKodeSub());
+            tsubkriteria.setText(sub.getNamaSub());
+            tbobot.setText(String.valueOf(sub.getBobot()));
+
+            // Memilih item JComboBox berdasarkan ID Kriteria
+            for (int i = 0; i < tkriteria.getItemCount(); i++) {
+
+                Object item = tkriteria.getItemAt(i);
+
+                if (item instanceof Kriteria) {
+
+                    Kriteria k = (Kriteria) item;
+
+                    if (k.getIdKriteria() == sub.getIdKriteria()) {
+                        tkriteria.setSelectedIndex(i);
+                        break;
+                    }
+                }
+            }
+        }
+
+        btnsimpan.setVisible(false);
+    }//GEN-LAST:event_tblkriteriaMouseClicked
+
     private void tcariKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tcariKeyPressed
         String keyword
                 = tcari.getText().trim();
 
         if (keyword.isEmpty()) {
 
-//            LoadTableKriteria();
-
+            LoadTableSubKriteria();
         } else {
 
-//            cariKriteria(keyword);
+            cariKriteria(keyword);
         }
     }//GEN-LAST:event_tcariKeyPressed
-
-    private void tblkriteriaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblkriteriaMouseClicked
-//        int row = tblkriteria.getSelectedRow();
-//
-//        if (row == -1) {
-//            return;
-//        }
-//
-//        String kode = tblkriteria.getValueAt(row, 1).toString();
-//        String nama = tblkriteria.getValueAt(row, 1).toString();
-//
-//        dao.KriteriaDAO dao = new dao.KriteriaDAO();
-//        models.Kriteria a = dao.getByKode(kode);
-//
-//        if (a != null) {
-//
-//            idKriteriaTerpilih = a.getIdKriteria();
-//
-//            // Set data ke komponen form Anda
-//            tkode.setText(a.getKodeKriteria());
-//            tnama.setText(a.getNamaKriteria());
-//        }
-//
-//        btnsimpan.setVisible(false);
-    }//GEN-LAST:event_tblkriteriaMouseClicked
-
-    private void btnsimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsimpanActionPerformed
-//        if (tkode.getText().trim().isEmpty() || tnama.getText().trim().isEmpty()) {
-//            JOptionPane.showMessageDialog(this, "Semua data kriteria harus diisi!");
-//            return;
-//        }
-//
-//        // 2. Ambil data dari form
-//        String kode = tkode.getText().trim();
-//        String nama = tnama.getText().trim();
-//
-//        // 3. Set ke model Kriteria
-//        models.Kriteria kriteria = new models.Kriteria();
-//        kriteria.setKodeKriteria(kode);
-//        kriteria.setNamaKriteria(nama);
-//
-//        // 4. Eksekusi simpan lewat DAO
-//        dao.KriteriaDAO daoKriteria = new dao.KriteriaDAO();
-//        boolean berhasil = daoKriteria.insert(kriteria);
-//
-//        if (berhasil) {
-//            JOptionPane.showMessageDialog(this, "Data Kriteria berhasil disimpan!");
-//            resetForm(); // Panggil fungsi reset Anda
-//            LoadTableKriteria(); // Un-comment jika ada fungsi refresh tabel
-//            generateKodeKriteria();
-//            
-//        } else {
-//            JOptionPane.showMessageDialog(this, "Gagal menyimpan data Kriteria.");
-//        }
-    }//GEN-LAST:event_btnsimpanActionPerformed
-
-    private void btnbatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbatalActionPerformed
-//
-//        resetForm();
-//        generateKodeKriteria();
-//        btnsimpan.setVisible(true);
-    }//GEN-LAST:event_btnbatalActionPerformed
-
-    private void btnubahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnubahActionPerformed
-//// 1. Cek apakah ada data yang dipilih dari tabel
-//        if (idKriteriaTerpilih == -1) {
-//            JOptionPane.showMessageDialog(this, "Pilih data kriteria yang ingin diubah dari tabel terlebih dahulu!");
-//            return;
-//        }
-//
-//        // 2. Validasi input
-//        if (tkode.getText().trim().isEmpty() || tnama.getText().trim().isEmpty()) {
-//            JOptionPane.showMessageDialog(this, "Semua data kriteria harus diisi!");
-//            return;
-//        }
-//
-//        // 3. Ambil data dari form
-//        String kode = tkode.getText().trim();
-//        String nama = tnama.getText().trim();
-//
-//        // 4. Set ke model Kriteria beserta ID-nya
-//        models.Kriteria kriteria = new models.Kriteria();
-//        kriteria.setIdKriteria(idKriteriaTerpilih); // ID wajib ada untuk klausa WHERE
-//        kriteria.setKodeKriteria(kode);
-//        kriteria.setNamaKriteria(nama);
-//
-//        // 5. Eksekusi update lewat DAO
-//        dao.KriteriaDAO daoKriteria = new dao.KriteriaDAO();
-//        boolean berhasil = daoKriteria.update(kriteria);
-//
-//        if (berhasil) {
-//            JOptionPane.showMessageDialog(this, "Data Kriteria berhasil diperbarui!");
-//            idKriteriaTerpilih = -1; // Reset ID
-//            resetForm();
-//            LoadTableKriteria();
-//            generateKodeKriteria();
-//        } else {
-//            JOptionPane.showMessageDialog(this, "Gagal memperbarui data Kriteria.");
-//        }
-    }//GEN-LAST:event_btnubahActionPerformed
-
-    private void btnhapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnhapusActionPerformed
-//// 1. Cek apakah ada data yang dipilih dari tabel
-//        if (idKriteriaTerpilih == -1) {
-//            JOptionPane.showMessageDialog(this, "Pilih data kriteria yang ingin dihapus dari tabel terlebih dahulu!");
-//            return;
-//        }
-//
-//        // 2. Konfirmasi hapus
-//        int konfirmasi = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus kriteria ini?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
-//
-//        if (konfirmasi == JOptionPane.YES_OPTION) {
-//            // 3. Eksekusi hapus lewat DAO
-//            dao.KriteriaDAO daoKriteria = new dao.KriteriaDAO();
-//            boolean berhasil = daoKriteria.delete(idKriteriaTerpilih);
-//
-//            if (berhasil) {
-//                JOptionPane.showMessageDialog(this, "Data Kriteria berhasil dihapus!");
-//                idKriteriaTerpilih = -1; // Reset ID
-//                resetForm();
-//                 LoadTableKriteria();
-//                 generateKodeKriteria();
-//            } else {
-//                JOptionPane.showMessageDialog(this, "Gagal menghapus data Kriteria.");
-//            }
-//        }
-    }//GEN-LAST:event_btnhapusActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -471,6 +632,7 @@ public class view_datasubkriteria extends javax.swing.JPanel {
     private javax.swing.JButton btnhapus;
     private javax.swing.JButton btnsimpan;
     private javax.swing.JButton btnubah;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -488,7 +650,7 @@ public class view_datasubkriteria extends javax.swing.JPanel {
     private javax.swing.JTextField tbobot;
     private javax.swing.JTextField tcari;
     private javax.swing.JTextField tkode;
-    private javax.swing.JTextField tnama;
-    private javax.swing.JTextField tnama1;
+    private javax.swing.JComboBox<String> tkriteria;
+    private javax.swing.JTextField tsubkriteria;
     // End of variables declaration//GEN-END:variables
 }

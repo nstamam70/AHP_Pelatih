@@ -192,12 +192,12 @@ public class vform_datapelatih extends javax.swing.JPanel {
     }//GEN-LAST:event_tcariKeyPressed
 
     private void btntambahdataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btntambahdataActionPerformed
- javax.swing.JPanel parent = (javax.swing.JPanel) this.getParent();
-    
-    parent.removeAll();
-    parent.add(new view_datapelatih());
-    parent.revalidate();
-    parent.repaint();
+        javax.swing.JPanel parent = (javax.swing.JPanel) this.getParent();
+
+        parent.removeAll();
+        parent.add(new view_datapelatih());
+        parent.revalidate();
+        parent.repaint();
     }//GEN-LAST:event_btntambahdataActionPerformed
 
     private void tblpelatihMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblpelatihMouseClicked

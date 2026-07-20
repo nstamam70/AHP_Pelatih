@@ -5,10 +5,35 @@ import models.Pelatih;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JComboBox;
+import models.ComboItem;
 
 public class PelatihDAO {
 
     private Connection conn = KoneksiDB.getConnection();
+
+    public void loadPelatihToComboBox(JComboBox comboBox) {
+
+        comboBox.removeAllItems();
+
+        String sql = "SELECT * FROM pelatih ORDER BY nama_pelatih";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+
+                comboBox.addItem(new ComboItem(
+                        rs.getInt("id_pelatih"),
+                        rs.getString("kode_pelatih"),
+                        rs.getString("nama_pelatih")
+                ));
+
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
 
     public List<Pelatih> getAll() {
         List<Pelatih> list = new ArrayList<>();

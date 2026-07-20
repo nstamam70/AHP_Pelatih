@@ -4,7 +4,7 @@
  */
 package views;
 
-//import dao.AuditorDAO;
+import dao.PelatihDAO;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -14,86 +14,96 @@ import javax.swing.table.DefaultTableModel;
  */
 public class view_datapelatih extends javax.swing.JPanel {
 
-    private int idAuditorTerpilih = -1;
+    private int idPelatihTerpilih = -1;
+    private PelatihDAO pelatihDAO = new PelatihDAO();
 
-    /**
-     * Creates new form view_dashboard
-     */
     public view_datapelatih() {
         initComponents();
-//        loadTableTeknisi();
-//        generateKodeAuditor();
+        loadTablePelatih();
+        generateKodePelatih();
         tkode.disable();
     }
 
-//    private void loadTableTeknisi() {
-//
-//        DefaultTableModel model
-//                = new DefaultTableModel();
-//
-//        model.addColumn("ID");
-//        model.addColumn("Kode");
-//        model.addColumn("Nama");
-//        model.addColumn("Jabatan");
-//        model.addColumn("Status");
-//
-//        AuditorDAO dao = new AuditorDAO();
-//
-//        for (models.Auditor t : dao.getAll()) {
-//
-//            model.addRow(new Object[]{
-//                t.getIdAuditor(),
-//                t.getKodeAuditor(),
-//                t.getNamaAuditor(),
-//                t.getJabatan(),
-//                t.getStatus()
-//            });
-//        }
-//
-//        tblauditor.setModel(model);
-//    }
-//
-//    private void generateKodeAuditor() {
-//
-//        AuditorDAO dao = new AuditorDAO();
-//
-//        String kode = dao.generateKode();
-//
-//        tkode.setText(kode);
-//    }
+    public view_datapelatih(String kode) {
+        initComponents();
+        loadTablePelatih();
+        tkode.disable();
 
-//    private void cariAuditor(String keyword) {
-//
-//        DefaultTableModel model
-//                = new DefaultTableModel();
-//
-//        model.addColumn("ID");
-//        model.addColumn("Kode");
-//        model.addColumn("Nama");
-//        model.addColumn("Jabatan");
-//        model.addColumn("Status");
-//
-//        AuditorDAO dao = new AuditorDAO();
-//
-//        for (models.Auditor t : dao.search(keyword)) {
-//
-//            model.addRow(new Object[]{
-//                t.getIdAuditor(),
-//                t.getKodeAuditor(),
-//                t.getNamaAuditor(),
-//                t.getJabatan(),
-//                t.getStatus()
-//            });
-//        }
-//
-//        tblauditor.setModel(model);
-//    }
+        models.Pelatih p = pelatihDAO.getByKode(kode);
+        if (p != null) {
+            idPelatihTerpilih = p.getIdPelatih();
+            tkode.setText(p.getKodePelatih());
+            tnama.setText(p.getNamaPelatih());
+            talamat.setText(p.getAlamat());
+            tnohp.setText(p.getNoHp());
+            tlisensi.setText(p.getLisensi());
+            tstatus.setSelectedItem(p.getStatus());
+            btnsimpan.setVisible(false);
+        }
+    }
+
+    private void loadTablePelatih() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("ID");
+        model.addColumn("Kode");
+        model.addColumn("Nama");
+        model.addColumn("Alamat");
+        model.addColumn("No Hp");
+        model.addColumn("Lisensi");
+        model.addColumn("Status");
+
+        for (models.Pelatih p : pelatihDAO.getAll()) {
+            model.addRow(new Object[]{
+                p.getIdPelatih(),
+                p.getKodePelatih(),
+                p.getNamaPelatih(),
+                p.getAlamat(),
+                p.getNoHp(),
+                p.getLisensi(),
+                p.getStatus()
+            });
+        }
+        tblpelatih.setModel(model);
+    }
+
+    private void generateKodePelatih() {
+        tkode.setText(pelatihDAO.generateKode());
+    }
+
+    private void cariPelatih(String keyword) {
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("ID");
+        model.addColumn("Kode");
+        model.addColumn("Nama");
+        model.addColumn("Alamat");
+        model.addColumn("No Telp");
+        model.addColumn("Lisensi");
+        model.addColumn("Status");
+
+        for (models.Pelatih p : pelatihDAO.search(keyword)) {
+            model.addRow(new Object[]{
+                p.getIdPelatih(),
+                p.getKodePelatih(),
+                p.getNamaPelatih(),
+                p.getAlamat(),
+                p.getNoHp(),
+                p.getLisensi(),
+                p.getStatus()
+            });
+        }
+        tblpelatih.setModel(model);
+    }
 
     private void resetForm() {
         tkode.setText("");
         tnama.setText("");
         talamat.setText("");
+        tnohp.setText("");
+        tlisensi.setText("");
         tstatus.setSelectedIndex(0);
+        idPelatihTerpilih = -1;
+        btnsimpan.setVisible(true);
+        generateKodePelatih();
         tkode.requestFocus();
     }
 
@@ -128,7 +138,7 @@ public class view_datapelatih extends javax.swing.JPanel {
         jSeparator3 = new javax.swing.JSeparator();
         jSeparator4 = new javax.swing.JSeparator();
         jLabel8 = new javax.swing.JLabel();
-        tnotelp = new javax.swing.JTextField();
+        tnohp = new javax.swing.JTextField();
         tlisensi = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
@@ -217,9 +227,9 @@ public class view_datapelatih extends javax.swing.JPanel {
         });
 
         jLabel8.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
-        jLabel8.setText("No Telp");
+        jLabel8.setText("No Hp");
 
-        tnotelp.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
+        tnohp.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
 
         tlisensi.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
 
@@ -275,7 +285,7 @@ public class view_datapelatih extends javax.swing.JPanel {
                                                         .addComponent(tkode)
                                                         .addComponent(tnama)
                                                         .addComponent(talamat)
-                                                        .addComponent(tnotelp, javax.swing.GroupLayout.PREFERRED_SIZE, 919, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                                        .addComponent(tnohp, javax.swing.GroupLayout.PREFERRED_SIZE, 919, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                 .addComponent(jLabel9)
@@ -333,7 +343,7 @@ public class view_datapelatih extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(tnotelp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tnohp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
@@ -368,149 +378,104 @@ public class view_datapelatih extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tcariKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tcariKeyPressed
-//        String keyword
-//                = tcari.getText().trim();
-//
-//        if (keyword.isEmpty()) {
-//
-//            loadTableTeknisi();
-//
-//        } else {
-//
-//            cariAuditor(keyword);
-//        }
+        String keyword = tcari.getText().trim();
+        if (keyword.isEmpty()) {
+            loadTablePelatih();
+        } else {
+            cariPelatih(keyword);
+        }
     }//GEN-LAST:event_tcariKeyPressed
 
     private void btnsimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsimpanActionPerformed
+        if (tkode.getText().trim().isEmpty() || tnama.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Kode dan Nama harus diisi!");
+            return;
+        }
+        models.Pelatih p = new models.Pelatih();
+        p.setKodePelatih(tkode.getText().trim());
+        p.setNamaPelatih(tnama.getText().trim());
+        p.setAlamat(talamat.getText().trim());
+        p.setNoHp(tnohp.getText().trim());
+        p.setLisensi(tlisensi.getText().trim());
+        p.setStatus(tstatus.getSelectedItem().toString());
 
-//        if (tkode.getText().trim().isEmpty() || tnama.getText().trim().isEmpty() || tjabatan.getText().trim().isEmpty()) {
-//            JOptionPane.showMessageDialog(this, "Semua data harus diisi!");
-//            return;
-//        }
-//        String kode = tkode.getText().trim();
-//        String nama = tnama.getText().trim();
-//        String jabatan = tjabatan.getText().trim();
-//        String status = tstatus.getSelectedItem().toString();
-//        models.Auditor auditor = new models.Auditor();
-//        auditor.setKodeAuditor(kode);
-//        auditor.setNamaAuditor(nama);
-//        auditor.setJabatan(jabatan);
-//        auditor.setStatus(status);
-//        dao.AuditorDAO daoAuditor = new dao.AuditorDAO();
-//        boolean berhasil = daoAuditor.insert(auditor);
-//        if (berhasil) {
-//            JOptionPane.showMessageDialog(this, "Data Auditor berhasil disimpan!");
-//            resetForm();
-//            generateKodeAuditor();
-//            loadTableTeknisi();
-//        } else {
-//            JOptionPane.showMessageDialog(this, "Gagal menyimpan data Auditor.");
-//        }
+        if (pelatihDAO.insert(p)) {
+            JOptionPane.showMessageDialog(this, "Data Pelatih berhasil disimpan!");
+            resetForm();
+            loadTablePelatih();
+        } else {
+            JOptionPane.showMessageDialog(this, "Gagal menyimpan data Pelatih.");
+        }
     }//GEN-LAST:event_btnsimpanActionPerformed
 
     private void btnbatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbatalActionPerformed
-//        btnsimpan.setVisible(true);
-//        resetForm();
-//        generateKodeAuditor();
+        resetForm();
     }//GEN-LAST:event_btnbatalActionPerformed
 
     private void tblpelatihMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblpelatihMouseClicked
-//        int row = tblauditor.getSelectedRow();
-//
-//        if (row == -1) {
-//            return;
-//        }
-//
-//
-//        String kode = tblauditor.getValueAt(row, 1).toString();
-//
-//        dao.AuditorDAO dao = new dao.AuditorDAO();
-//        models.Auditor a = dao.getByKode(kode); 
-//
-//        if (a != null) {
-//
-//            idAuditorTerpilih = a.getIdAuditor();
-//
-//            // Set data ke komponen form Anda
-//            tkode.setText(a.getKodeAuditor());
-//            tnama.setText(a.getNamaAuditor());
-//            tjabatan.setText(a.getJabatan());
-//            tstatus.setSelectedItem(a.getStatus());
-//        }
-//
-//        btnsimpan.setVisible(false);
+        int row = tblpelatih.getSelectedRow();
+        if (row == -1) return;
+
+        String kode = tblpelatih.getValueAt(row, 1).toString();
+        models.Pelatih p = pelatihDAO.getByKode(kode);
+
+        if (p != null) {
+            idPelatihTerpilih = p.getIdPelatih();
+            tkode.setText(p.getKodePelatih());
+            tnama.setText(p.getNamaPelatih());
+            talamat.setText(p.getAlamat());
+            tnohp.setText(p.getNoHp());
+            tlisensi.setText(p.getLisensi());
+            tstatus.setSelectedItem(p.getStatus());
+        }
+        btnsimpan.setVisible(false);
     }//GEN-LAST:event_tblpelatihMouseClicked
-//
+
     private void btnubahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnubahActionPerformed
-//        if (idAuditorTerpilih == -1) {
-//            JOptionPane.showMessageDialog(this, "Pilih data yang ingin diubah dari tabel terlebih dahulu!");
-//            return;
-//        }
-//
-//       
-//        if (tkode.getText().trim().isEmpty() || tnama.getText().trim().isEmpty() || tjabatan.getText().trim().isEmpty()) {
-//            JOptionPane.showMessageDialog(this, "Semua data harus diisi!");
-//            return;
-//        }
-//
-//        
-//        String kode = tkode.getText().trim();
-//        String nama = tnama.getText().trim();
-//        String jabatan = tjabatan.getText().trim();
-//        String status = tstatus.getSelectedItem().toString();
-//
-//        
-//        models.Auditor auditor = new models.Auditor();
-//        auditor.setIdAuditor(idAuditorTerpilih); 
-//        auditor.setKodeAuditor(kode);
-//        auditor.setNamaAuditor(nama);
-//        auditor.setJabatan(jabatan);
-//        auditor.setStatus(status);
-//
-//     
-//        dao.AuditorDAO daoAuditor = new dao.AuditorDAO();
-//        boolean berhasil = daoAuditor.update(auditor);
-//
-//        if (berhasil) {
-//            JOptionPane.showMessageDialog(this, "Data Auditor berhasil diperbarui!");
-//            idAuditorTerpilih = -1; 
-//            resetForm(); 
-//            generateKodeAuditor();
-//            loadTableTeknisi();
-//            
-//        } else {
-//            JOptionPane.showMessageDialog(this, "Gagal memperbarui data Auditor.");
-//        }
+        if (idPelatihTerpilih == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih data yang ingin diubah dari tabel terlebih dahulu!");
+            return;
+        }
+        if (tkode.getText().trim().isEmpty() || tnama.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Kode dan Nama harus diisi!");
+            return;
+        }
+
+        models.Pelatih p = new models.Pelatih();
+        p.setIdPelatih(idPelatihTerpilih);
+        p.setKodePelatih(tkode.getText().trim());
+        p.setNamaPelatih(tnama.getText().trim());
+        p.setAlamat(talamat.getText().trim());
+        p.setNoHp(tnohp.getText().trim());
+        p.setLisensi(tlisensi.getText().trim());
+        p.setStatus(tstatus.getSelectedItem().toString());
+
+        if (pelatihDAO.update(p)) {
+            JOptionPane.showMessageDialog(this, "Data Pelatih berhasil diperbarui!");
+            resetForm();
+            loadTablePelatih();
+        } else {
+            JOptionPane.showMessageDialog(this, "Gagal memperbarui data Pelatih.");
+        }
     }//GEN-LAST:event_btnubahActionPerformed
-//
+
     private void btnhapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnhapusActionPerformed
-//
-//        if (idAuditorTerpilih == -1) {
-//            JOptionPane.showMessageDialog(this, "Pilih data yang ingin dihapus dari tabel terlebih dahulu!");
-//            return;
-//        }
-//
-//        
-//        int konfirmasi = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus data ini?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
-//
-//        if (konfirmasi == JOptionPane.YES_OPTION) {
-//
-//            dao.AuditorDAO daoAuditor = new dao.AuditorDAO();
-//            boolean berhasil = daoAuditor.delete(idAuditorTerpilih);
-//
-//            if (berhasil) {
-//                JOptionPane.showMessageDialog(this, "Data Auditor berhasil dihapus!");
-//                idAuditorTerpilih = -1; 
-//                resetForm(); 
-//                generateKodeAuditor();
-//                loadTableTeknisi();
-//                
-//            } else {
-//                JOptionPane.showMessageDialog(this, "Gagal menghapus data Auditor.");
-//            }
-//        }
+        if (idPelatihTerpilih == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih data yang ingin dihapus dari tabel terlebih dahulu!");
+            return;
+        }
+
+        int konfirmasi = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus data ini?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
+        if (konfirmasi == JOptionPane.YES_OPTION) {
+            if (pelatihDAO.delete(idPelatihTerpilih)) {
+                JOptionPane.showMessageDialog(this, "Data Pelatih berhasil dihapus!");
+                resetForm();
+                loadTablePelatih();
+            } else {
+                JOptionPane.showMessageDialog(this, "Gagal menghapus data Pelatih.");
+            }
+        }
     }//GEN-LAST:event_btnhapusActionPerformed
-//
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnbatal;
@@ -538,7 +503,7 @@ public class view_datapelatih extends javax.swing.JPanel {
     private javax.swing.JTextField tkode;
     private javax.swing.JTextField tlisensi;
     private javax.swing.JTextField tnama;
-    private javax.swing.JTextField tnotelp;
+    private javax.swing.JTextField tnohp;
     private javax.swing.JComboBox<String> tstatus;
     // End of variables declaration//GEN-END:variables
 }

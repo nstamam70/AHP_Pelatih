@@ -333,7 +333,8 @@ public class auth_login extends javax.swing.JFrame {
     }//GEN-LAST:event_jPasswordFocusLost
 
     private void labelregisMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_labelregisMouseClicked
-   
+        new auth_register().setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_labelregisMouseClicked
 
     private void labelregisMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_labelregisMouseEntered

@@ -3,8 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package views;
+import dao.DashboardDAO;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.Map;
 import utils.RoundedBorder;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -20,73 +22,84 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class view_dashboard extends javax.swing.JPanel {
 
-    /**
-     * Creates new form view_dashboard
-     */
+    private DashboardDAO dashboardDAO = new DashboardDAO();
+
     public view_dashboard() {
         initComponents();
+        loadCards();
         buildDonutChart();
         buildBarChart();
-
     }
 
-   private void buildDonutChart() {
-    DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
-    dataset.setValue("Kompetensi Materi", 25);
-    dataset.setValue("Metode Penyampaian", 20);
-    dataset.setValue("Komunikasi", 15);
-    dataset.setValue("Pengelolaan Kelas", 15);
-    dataset.setValue("Profesionalisme", 10);
-    dataset.setValue("Evaluasi Pembelajaran", 10);
-    dataset.setValue("Kepuasan Peserta", 5);
+    private void loadCards() {
+        jLabel2.setText("<html><center>Total Pelatih<br><span style='font-size:24pt'>" + dashboardDAO.countPelatih() + "</span></center></html>");
+        jLabel4.setText("<html><center>Total Kriteria<br><span style='font-size:24pt'>" + dashboardDAO.countKriteria() + "</span></center></html>");
+        jLabel3.setText("<html><center>Total Penilaian<br><span style='font-size:24pt'>" + dashboardDAO.countPenilaian() + "</span></center></html>");
+    }
 
-    JFreeChart chart = ChartFactory.createRingChart(
-            "Bobot Kriteria", dataset, true, true, false
-    );
-    RingPlot plot = (RingPlot) chart.getPlot();
-    plot.setSectionDepth(0.35);
+    private void buildDonutChart() {
+        DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
+        Map<String, Integer> data = dashboardDAO.getKriteriaWithSubCount();
 
-    ChartPanel chartPanel = new ChartPanel(chart);
-    chartPanel.setPreferredSize(new Dimension(346, 327));
-    chartPanel.setMaximumSize(new Dimension(346, 327));
-    chartPanel.setMinimumSize(new Dimension(346, 327));
+        if (data.isEmpty()) {
+            dataset.setValue("Belum ada data", 1);
+        } else {
+            for (Map.Entry<String, Integer> entry : data.entrySet()) {
+                dataset.setValue(entry.getKey(), entry.getValue());
+            }
+        }
 
-    jPanelChart.removeAll();
-    jPanelChart.setLayout(new BorderLayout());
-    jPanelChart.setPreferredSize(new Dimension(346, 327)); // kunci ukuran panel wadah
-    jPanelChart.setMaximumSize(new Dimension(346, 327));
-    jPanelChart.add(chartPanel, BorderLayout.CENTER);
-    jPanelChart.revalidate();
-    jPanelChart.repaint();
-}
+        JFreeChart chart = ChartFactory.createRingChart(
+                "Distribusi Sub Kriteria", dataset, true, true, false
+        );
+        RingPlot plot = (RingPlot) chart.getPlot();
+        plot.setSectionDepth(0.35);
 
-private void buildBarChart() {
-    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-    dataset.addValue(0.923, "Skor", "Andi Wijoyo");
-    dataset.addValue(0.891, "Skor", "Budi Santoso");
-    dataset.addValue(0.872, "Skor", "Citra Lestari");
-    dataset.addValue(0.845, "Skor", "Dedi Kurniawan");
-    dataset.addValue(0.812, "Skor", "Eka Pratama");
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(346, 327));
+        chartPanel.setMaximumSize(new Dimension(346, 327));
+        chartPanel.setMinimumSize(new Dimension(346, 327));
 
-    JFreeChart chart = ChartFactory.createBarChart(
-            "Top 5 Ranking Pelatih", "", "Skor",
-            dataset, PlotOrientation.HORIZONTAL,
-            false, true, false
-    );
+        jPanelChart.removeAll();
+        jPanelChart.setLayout(new BorderLayout());
+        jPanelChart.setPreferredSize(new Dimension(346, 327));
+        jPanelChart.setMaximumSize(new Dimension(346, 327));
+        jPanelChart.add(chartPanel, BorderLayout.CENTER);
+        jPanelChart.revalidate();
+        jPanelChart.repaint();
+    }
 
-    ChartPanel chartPanel = new ChartPanel(chart);
-    chartPanel.setPreferredSize(new Dimension(346, 327));
-    chartPanel.setMaximumSize(new Dimension(346, 327));
-    chartPanel.setMinimumSize(new Dimension(346, 327));
+    private void buildBarChart() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        Map<String, Double> data = dashboardDAO.getTop5Ranking();
 
-    jPanelRangking.removeAll();
-    jPanelRangking.setLayout(new BorderLayout());
-    jPanelRangking.setPreferredSize(new Dimension(346, 327));
-    jPanelRangking.setMaximumSize(new Dimension(346, 327));
-    jPanelRangking.add(chartPanel, BorderLayout.CENTER);
-    jPanelRangking.revalidate();
-    jPanelRangking.repaint();
-}
+        if (data.isEmpty()) {
+            dataset.addValue(0, "Skor", "Belum ada data");
+        } else {
+            for (Map.Entry<String, Double> entry : data.entrySet()) {
+                dataset.addValue(entry.getValue(), "Skor", entry.getKey());
+            }
+        }
+
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Top 5 Ranking Pelatih", "", "Skor",
+                dataset, PlotOrientation.HORIZONTAL,
+                false, true, false
+        );
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(346, 327));
+        chartPanel.setMaximumSize(new Dimension(346, 327));
+        chartPanel.setMinimumSize(new Dimension(346, 327));
+
+        jPanelRangking.removeAll();
+        jPanelRangking.setLayout(new BorderLayout());
+        jPanelRangking.setPreferredSize(new Dimension(346, 327));
+        jPanelRangking.setMaximumSize(new Dimension(346, 327));
+        jPanelRangking.add(chartPanel, BorderLayout.CENTER);
+        jPanelRangking.revalidate();
+        jPanelRangking.repaint();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

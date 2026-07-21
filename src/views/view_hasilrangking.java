@@ -4,14 +4,10 @@
  */
 package views;
 
-//import dao.AuditorDAO;
-//import dao.KriteriaDAO;
-//import dao.PerbandinganDAO;
-//import java.util.List;
-//import javax.swing.table.DefaultTableModel;
-//import models.Auditor;
-//import models.Kriteria;
-//import utils.AHPCalculator;
+import dao.HasilDAO;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -24,51 +20,33 @@ public class view_hasilrangking extends javax.swing.JPanel {
      */
     public view_hasilrangking() {
         initComponents();
-//        loadRangking();
+        loadRangking();
     }
 
-//    private void loadRangking() {
-//        KriteriaDAO kriteriaDAO = new KriteriaDAO();
-//        AuditorDAO auditorDAO = new AuditorDAO();
-//        PerbandinganDAO perbandinganDAO = new PerbandinganDAO();
-//
-//        List<Kriteria> kriteriaList = kriteriaDAO.getAll();
-//        List<Auditor> auditorList = auditorDAO.getAll();
-//
-//        if (kriteriaList.isEmpty() || auditorList.isEmpty()) return;
-//
-//        int nKriteria = kriteriaList.size();
-//        int nAlternatif = auditorList.size();
-//
-//        // Hitung bobot kriteria
-//        double[][] matriksKriteria = perbandinganDAO.buildMatriksKriteria(kriteriaList);
-//        double[] bobotKriteria = AHPCalculator.hitungBobotPrioritas(matriksKriteria);
-//
-//        // Hitung bobot alternatif per kriteria
-//        double[][] bobotAlternatif = new double[nKriteria][nAlternatif];
-//        for (int k = 0; k < nKriteria; k++) {
-//            int idKriteria = kriteriaList.get(k).getIdKriteria();
-//            double[][] matriksAlt = perbandinganDAO.buildMatriksAlternatif(idKriteria, auditorList);
-//            bobotAlternatif[k] = AHPCalculator.hitungBobotPrioritas(matriksAlt);
-//        }
-//
-//        // Hitung nilai akhir & rangking
-//        double[] nilaiAkhir = AHPCalculator.hitungNilaiAkhir(bobotKriteria, bobotAlternatif);
-//        int[] rangking = AHPCalculator.getRangking(nilaiAkhir);
-//
-//        // Tampilkan tabel
-//        String[] header = {"Peringkat", "Kode", "Nama Auditor", "Nilai Akhir", "Persentase"};
-//        Object[][] data = new Object[rangking.length][5];
-//        for (int rank = 0; rank < rangking.length; rank++) {
-//            int idx = rangking[rank];
-//            data[rank][0] = rank + 1;
-//            data[rank][1] = auditorList.get(idx).getKodeAuditor();
-//            data[rank][2] = auditorList.get(idx).getNamaAuditor();
-//            data[rank][3] = String.format("%.3f", nilaiAkhir[idx]);
-//            data[rank][4] = String.format("%.1f%%", nilaiAkhir[idx] * 100);
-//        }
-//        jTable1.setModel(new DefaultTableModel(data, header));
-//    }
+    private void loadRangking() {
+        HasilDAO hasilDAO = new HasilDAO();
+        ResultSet rs = hasilDAO.getRangking();
+        if (rs == null) return;
+
+        String[] header = {"Peringkat", "Kode Pelatih", "Nama Pelatih", "Nilai Akhir", "Persentase"};
+        DefaultTableModel model = new DefaultTableModel(header, 0);
+
+        try {
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getInt("ranking"),
+                    rs.getString("kode_pelatih"),
+                    rs.getString("nama_pelatih"),
+                    String.format("%.4f", rs.getDouble("nilai_akhir")),
+                    String.format("%.2f%%", rs.getDouble("nilai_akhir") * 100)
+                });
+            }
+        } catch (SQLException e) {
+            System.err.println("Error Load Rangking: " + e.getMessage());
+        }
+
+        jTable1.setModel(model);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

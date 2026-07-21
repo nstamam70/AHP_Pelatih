@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Waktu pembuatan: 20 Jul 2026 pada 18.40
--- Versi server: 10.4.32-MariaDB
--- Versi PHP: 8.2.12
+-- Host: localhost
+-- Generation Time: Jul 21, 2026 at 11:23 AM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `hasil`
+-- Table structure for table `hasil`
 --
 
 CREATE TABLE `hasil` (
@@ -38,7 +38,7 @@ CREATE TABLE `hasil` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `kriteria`
+-- Table structure for table `kriteria`
 --
 
 CREATE TABLE `kriteria` (
@@ -48,31 +48,45 @@ CREATE TABLE `kriteria` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `kriteria`
+-- Dumping data for table `kriteria`
 --
 
 INSERT INTO `kriteria` (`id_kriteria`, `kode_kriteria`, `nama_kriteria`) VALUES
 (1, 'KRT-001', 'Kompetensi'),
 (2, 'KRT-002', 'Kedisiplinan'),
-(3, 'KRT-003', 'Kinerja Pembinaan');
+(6, 'KRT-003', 'Pembinaan');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pairwise_kriteria`
+-- Table structure for table `pairwise_alternatif`
+--
+
+CREATE TABLE `pairwise_alternatif` (
+  `id_pairwise` int(11) NOT NULL,
+  `id_sub` int(11) NOT NULL,
+  `id_pelatih1` int(11) NOT NULL,
+  `id_pelatih2` int(11) NOT NULL,
+  `nilai` decimal(10,4) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pairwise_kriteria`
 --
 
 CREATE TABLE `pairwise_kriteria` (
   `id_pairwise` int(11) NOT NULL,
-  `id_kriteria1` int(11) DEFAULT NULL,
-  `id_kriteria2` int(11) DEFAULT NULL,
+  `id_sub1` int(11) DEFAULT NULL,
+  `id_sub2` int(11) DEFAULT NULL,
   `nilai` decimal(10,4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pelatih`
+-- Table structure for table `pelatih`
 --
 
 CREATE TABLE `pelatih` (
@@ -85,10 +99,17 @@ CREATE TABLE `pelatih` (
   `status` enum('Aktif','Nonaktif') DEFAULT 'Aktif'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `pelatih`
+--
+
+INSERT INTO `pelatih` (`id_pelatih`, `kode_pelatih`, `nama_pelatih`, `alamat`, `no_hp`, `lisensi`, `status`) VALUES
+(1, 'PLT001', 'Ahmad Rivai', 'Depk', '081212828', 'Sertifikasi Garuda', 'Aktif');
+
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `penilaian`
+-- Table structure for table `penilaian`
 --
 
 CREATE TABLE `penilaian` (
@@ -102,7 +123,7 @@ CREATE TABLE `penilaian` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `sub_kriteria`
+-- Table structure for table `sub_kriteria`
 --
 
 CREATE TABLE `sub_kriteria` (
@@ -114,7 +135,7 @@ CREATE TABLE `sub_kriteria` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `sub_kriteria`
+-- Dumping data for table `sub_kriteria`
 --
 
 INSERT INTO `sub_kriteria` (`id_sub`, `id_kriteria`, `kode_sub`, `nama_sub`, `bobot`) VALUES
@@ -124,16 +145,12 @@ INSERT INTO `sub_kriteria` (`id_sub`, `id_kriteria`, `kode_sub`, `nama_sub`, `bo
 (4, 2, 'SK-004', 'Kedisiplinan', 0),
 (5, 2, 'SK-005', 'Tanggung Jawab Administratif', 0),
 (6, 2, 'SK-006', 'Kepemimpinan', 0),
-(7, 3, 'SK-007', 'Perkembangan Atlet', 0),
-(8, 3, 'SK-008', 'Kerja Sama Tim', 0),
-(9, 3, 'SK-009', 'Profesionalisme', 0),
-(10, 2, 'SK-010', 'TESTER', 20),
-(11, 1, 'SK-011', 'TESTER12334', 20);
+(10, 2, 'SK-010', 'TESTER', 20);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `user`
+-- Table structure for table `user`
 --
 
 CREATE TABLE `user` (
@@ -145,7 +162,7 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `user`
+-- Dumping data for table `user`
 --
 
 INSERT INTO `user` (`id_user`, `nama`, `username`, `password`, `role`) VALUES
@@ -156,36 +173,47 @@ INSERT INTO `user` (`id_user`, `nama`, `username`, `password`, `role`) VALUES
 --
 
 --
--- Indeks untuk tabel `hasil`
+-- Indexes for table `hasil`
 --
 ALTER TABLE `hasil`
   ADD PRIMARY KEY (`id_hasil`),
   ADD KEY `id_pelatih` (`id_pelatih`);
 
 --
--- Indeks untuk tabel `kriteria`
+-- Indexes for table `kriteria`
 --
 ALTER TABLE `kriteria`
   ADD PRIMARY KEY (`id_kriteria`),
   ADD UNIQUE KEY `kode_kriteria` (`kode_kriteria`);
 
 --
--- Indeks untuk tabel `pairwise_kriteria`
+-- Indexes for table `pairwise_alternatif`
+--
+ALTER TABLE `pairwise_alternatif`
+  ADD PRIMARY KEY (`id_pairwise`),
+  ADD UNIQUE KEY `unique_comparison` (`id_sub`,`id_pelatih1`,`id_pelatih2`),
+  ADD KEY `id_sub` (`id_sub`),
+  ADD KEY `id_pelatih1` (`id_pelatih1`),
+  ADD KEY `id_pelatih2` (`id_pelatih2`);
+
+--
+-- Indexes for table `pairwise_kriteria`
 --
 ALTER TABLE `pairwise_kriteria`
   ADD PRIMARY KEY (`id_pairwise`),
-  ADD KEY `id_kriteria1` (`id_kriteria1`),
-  ADD KEY `id_kriteria2` (`id_kriteria2`);
+  ADD UNIQUE KEY `unique_pair` (`id_sub1`,`id_sub2`),
+  ADD KEY `id_sub1` (`id_sub1`),
+  ADD KEY `id_sub2` (`id_sub2`);
 
 --
--- Indeks untuk tabel `pelatih`
+-- Indexes for table `pelatih`
 --
 ALTER TABLE `pelatih`
   ADD PRIMARY KEY (`id_pelatih`),
   ADD UNIQUE KEY `kode_pelatih` (`kode_pelatih`);
 
 --
--- Indeks untuk tabel `penilaian`
+-- Indexes for table `penilaian`
 --
 ALTER TABLE `penilaian`
   ADD PRIMARY KEY (`id_penilaian`),
@@ -194,84 +222,98 @@ ALTER TABLE `penilaian`
   ADD KEY `fk_penilaian_kriteria` (`id_kriteria`);
 
 --
--- Indeks untuk tabel `sub_kriteria`
+-- Indexes for table `sub_kriteria`
 --
 ALTER TABLE `sub_kriteria`
   ADD PRIMARY KEY (`id_sub`),
   ADD KEY `id_kriteria` (`id_kriteria`);
 
 --
--- Indeks untuk tabel `user`
+-- Indexes for table `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id_user`),
   ADD UNIQUE KEY `username` (`username`);
 
 --
--- AUTO_INCREMENT untuk tabel yang dibuang
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT untuk tabel `hasil`
+-- AUTO_INCREMENT for table `hasil`
 --
 ALTER TABLE `hasil`
   MODIFY `id_hasil` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `kriteria`
+-- AUTO_INCREMENT for table `kriteria`
 --
 ALTER TABLE `kriteria`
-  MODIFY `id_kriteria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_kriteria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT untuk tabel `pairwise_kriteria`
+-- AUTO_INCREMENT for table `pairwise_alternatif`
+--
+ALTER TABLE `pairwise_alternatif`
+  MODIFY `id_pairwise` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pairwise_kriteria`
 --
 ALTER TABLE `pairwise_kriteria`
   MODIFY `id_pairwise` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `pelatih`
+-- AUTO_INCREMENT for table `pelatih`
 --
 ALTER TABLE `pelatih`
-  MODIFY `id_pelatih` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_pelatih` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT untuk tabel `penilaian`
+-- AUTO_INCREMENT for table `penilaian`
 --
 ALTER TABLE `penilaian`
   MODIFY `id_penilaian` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `sub_kriteria`
+-- AUTO_INCREMENT for table `sub_kriteria`
 --
 ALTER TABLE `sub_kriteria`
   MODIFY `id_sub` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT untuk tabel `user`
+-- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
   MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
+-- Constraints for dumped tables
 --
 
 --
--- Ketidakleluasaan untuk tabel `hasil`
+-- Constraints for table `hasil`
 --
 ALTER TABLE `hasil`
   ADD CONSTRAINT `hasil_ibfk_1` FOREIGN KEY (`id_pelatih`) REFERENCES `pelatih` (`id_pelatih`);
 
 --
--- Ketidakleluasaan untuk tabel `pairwise_kriteria`
+-- Constraints for table `pairwise_alternatif`
 --
-ALTER TABLE `pairwise_kriteria`
-  ADD CONSTRAINT `pairwise_kriteria_ibfk_1` FOREIGN KEY (`id_kriteria1`) REFERENCES `kriteria` (`id_kriteria`),
-  ADD CONSTRAINT `pairwise_kriteria_ibfk_2` FOREIGN KEY (`id_kriteria2`) REFERENCES `kriteria` (`id_kriteria`);
+ALTER TABLE `pairwise_alternatif`
+  ADD CONSTRAINT `pairwise_alt_ibfk_1` FOREIGN KEY (`id_sub`) REFERENCES `sub_kriteria` (`id_sub`) ON DELETE CASCADE,
+  ADD CONSTRAINT `pairwise_alt_ibfk_2` FOREIGN KEY (`id_pelatih1`) REFERENCES `pelatih` (`id_pelatih`) ON DELETE CASCADE,
+  ADD CONSTRAINT `pairwise_alt_ibfk_3` FOREIGN KEY (`id_pelatih2`) REFERENCES `pelatih` (`id_pelatih`) ON DELETE CASCADE;
 
 --
--- Ketidakleluasaan untuk tabel `penilaian`
+-- Constraints for table `pairwise_kriteria`
+--
+ALTER TABLE `pairwise_kriteria`
+  ADD CONSTRAINT `pairwise_kriteria_ibfk_1` FOREIGN KEY (`id_sub1`) REFERENCES `sub_kriteria` (`id_sub`) ON DELETE CASCADE,
+  ADD CONSTRAINT `pairwise_kriteria_ibfk_2` FOREIGN KEY (`id_sub2`) REFERENCES `sub_kriteria` (`id_sub`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `penilaian`
 --
 ALTER TABLE `penilaian`
   ADD CONSTRAINT `fk_penilaian_kriteria` FOREIGN KEY (`id_kriteria`) REFERENCES `kriteria` (`id_kriteria`) ON UPDATE CASCADE,
@@ -279,7 +321,7 @@ ALTER TABLE `penilaian`
   ADD CONSTRAINT `penilaian_ibfk_2` FOREIGN KEY (`id_sub`) REFERENCES `sub_kriteria` (`id_sub`);
 
 --
--- Ketidakleluasaan untuk tabel `sub_kriteria`
+-- Constraints for table `sub_kriteria`
 --
 ALTER TABLE `sub_kriteria`
   ADD CONSTRAINT `sub_kriteria_ibfk_1` FOREIGN KEY (`id_kriteria`) REFERENCES `kriteria` (`id_kriteria`) ON DELETE CASCADE ON UPDATE CASCADE;

@@ -4,15 +4,17 @@
  */
 package views;
 
-//import dao.AuditorDAO;
-//import dao.KriteriaDAO;
-//import dao.PerbandinganDAO;
-//import java.util.List;
-//import javax.swing.JOptionPane;
-//import javax.swing.table.DefaultTableModel;
-//import models.Auditor;
-//import models.Kriteria;
-//import utils.AHPCalculator;
+import dao.HasilDAO;
+import dao.PelatihDAO;
+import dao.PerbandinganAlternatifDAO;
+import dao.PerbandinganSubKriteriaDAO;
+import dao.SubKriteriaDAO;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import models.Pelatih;
+import models.SubKriteria;
+import utils.AHPCalculator;
 
 /**
  *
@@ -20,157 +22,204 @@ package views;
  */
 public class view_prosesahp extends javax.swing.JPanel {
 
-//    private KriteriaDAO kriteriaDAO;
-//    private AuditorDAO auditorDAO;
-//    private PerbandinganDAO perbandinganDAO;
-//    private List<Kriteria> kriteriaList;
-//    private List<Auditor> auditorList;
+    private SubKriteriaDAO subDAO;
+    private PelatihDAO pelatihDAO;
+    private PerbandinganSubKriteriaDAO perbandinganSubDAO;
+    private PerbandinganAlternatifDAO perbandinganAltDAO;
+    private HasilDAO hasilDAO;
+    private List<SubKriteria> subList;
+    private List<Pelatih> pelatihList;
 
-    /**
-     * Creates new form view_dashboard
-     */
     public view_prosesahp() {
         initComponents();
-//        kriteriaDAO = new KriteriaDAO();
-//        auditorDAO = new AuditorDAO();
-//        perbandinganDAO = new PerbandinganDAO();
-//        kriteriaList = kriteriaDAO.getAll();
-//        auditorList = auditorDAO.getAll();
+        subDAO = new SubKriteriaDAO();
+        pelatihDAO = new PelatihDAO();
+        perbandinganSubDAO = new PerbandinganSubKriteriaDAO();
+        perbandinganAltDAO = new PerbandinganAlternatifDAO();
+        hasilDAO = new HasilDAO();
+
+        // Navigasi ke halaman perbandingan
+        jButton1.addActionListener(e -> navigateTo(new view_perbandingankriteria()));
+        jButton4.addActionListener(e -> navigateTo(new view_perbandinganalternatif()));
+
+        // Buat text field read-only
+        lblCi.setEditable(false);
+        lblCr.setEditable(false);
+        lblLambda.setEditable(false);
+        lblCi1.setEditable(false);
+        lblCr1.setEditable(false);
+        lblLambda1.setEditable(false);
     }
 
-//    private void hitungHasilAkhir() {
-//        if (kriteriaList.isEmpty() || auditorList.isEmpty()) {
-//            JOptionPane.showMessageDialog(this, "Data kriteria atau auditor belum tersedia!");
-//            return;
-//        }
-//
-//        int nKriteria = kriteriaList.size();
-//        int nAlternatif = auditorList.size();
-//
-//        // 1. Hitung bobot kriteria
-//        double[][] matriksKriteria = perbandinganDAO.buildMatriksKriteria(kriteriaList);
-//        AHPCalculator.HasilAHP hasilKriteria = AHPCalculator.proses(matriksKriteria);
-//
-//        // Tampilkan tabel hasil perbandingan kriteria (normalisasi + bobot)
-//        tampilTabelKriteria(hasilKriteria);
-//
-//        // Tampilkan CI, CR, Lambda kriteria
-//        lblCi.setText(String.format("CI: %.4f", hasilKriteria.ci));
-//        lblCr.setText(String.format("CR: %.4f", hasilKriteria.cr));
-//        lblLambda.setText(String.format("λ: %.4f", hasilKriteria.lambdaMax));
-//
-//        if (!hasilKriteria.konsisten) {
-//            JOptionPane.showMessageDialog(this,
-//                "Perbandingan kriteria TIDAK konsisten (CR = " +
-//                String.format("%.4f", hasilKriteria.cr) + " >= 0.10).\n" +
-//                "Silakan perbaiki nilai perbandingan kriteria.",
-//                "Peringatan", JOptionPane.WARNING_MESSAGE);
-//        }
-//
-//        // 2. Hitung bobot alternatif per kriteria
-//        double[][] bobotAlternatif = new double[nKriteria][nAlternatif];
-//        double ciAltTotal = 0, crAltTotal = 0, lambdaAltTotal = 0;
-//
-//        for (int k = 0; k < nKriteria; k++) {
-//            int idKriteria = kriteriaList.get(k).getIdKriteria();
-//            double[][] matriksAlt = perbandinganDAO.buildMatriksAlternatif(idKriteria, auditorList);
-//            AHPCalculator.HasilAHP hasilAlt = AHPCalculator.proses(matriksAlt);
-//            bobotAlternatif[k] = hasilAlt.bobotPrioritas;
-//            ciAltTotal += hasilAlt.ci;
-//            crAltTotal += hasilAlt.cr;
-//            lambdaAltTotal += hasilAlt.lambdaMax;
-//        }
-//
-//        // Tampilkan tabel hasil perbandingan alternatif (bobot per kriteria)
-//        tampilTabelAlternatif(bobotAlternatif);
-//
-//        // Tampilkan rata-rata CI, CR, Lambda alternatif
-//        lblCi1.setText(String.format("CI: %.4f", ciAltTotal / nKriteria));
-//        lblCr1.setText(String.format("CR: %.4f", crAltTotal / nKriteria));
-//        lblLambda1.setText(String.format("λ: %.4f", lambdaAltTotal / nKriteria));
-//
-//        // 3. Hitung nilai akhir (prioritas global)
-//        double[] nilaiAkhir = AHPCalculator.hitungNilaiAkhir(hasilKriteria.bobotPrioritas, bobotAlternatif);
-//        int[] rangking = AHPCalculator.getRangking(nilaiAkhir);
-//
-//        // Tampilkan tabel hasil akhir
-//        tampilTabelHasilAkhir(nilaiAkhir, rangking);
-//    }
-//
-//    private void tampilTabelKriteria(AHPCalculator.HasilAHP hasil) {
-//        int n = kriteriaList.size();
-//        String[] header = new String[n + 2];
-//        header[0] = "Kriteria";
-//        for (int i = 0; i < n; i++) {
-//            header[i + 1] = kriteriaList.get(i).getKodeKriteria();
-//        }
-//        header[n + 1] = "Bobot";
-//
-//        Object[][] data = new Object[n][n + 2];
-//        for (int i = 0; i < n; i++) {
-//            data[i][0] = kriteriaList.get(i).getKodeKriteria() + " - " + kriteriaList.get(i).getNamaKriteria();
-//            for (int j = 0; j < n; j++) {
-//                data[i][j + 1] = String.format("%.3f", hasil.matriksNormalisasi[i][j]);
-//            }
-//            data[i][n + 1] = String.format("%.3f", hasil.bobotPrioritas[i]);
-//        }
-//        jTable1.setModel(new DefaultTableModel(data, header));
-//    }
-//
-//    private void tampilTabelAlternatif(double[][] bobotAlternatif) {
-//        int nKriteria = kriteriaList.size();
-//        int nAlt = auditorList.size();
-//
-//        String[] header = new String[nKriteria + 1];
-//        header[0] = "Alternatif";
-//        for (int k = 0; k < nKriteria; k++) {
-//            header[k + 1] = kriteriaList.get(k).getKodeKriteria();
-//        }
-//
-//        Object[][] data = new Object[nAlt][nKriteria + 1];
-//        for (int i = 0; i < nAlt; i++) {
-//            data[i][0] = auditorList.get(i).getKodeAuditor() + " - " + auditorList.get(i).getNamaAuditor();
-//            for (int k = 0; k < nKriteria; k++) {
-//                data[i][k + 1] = String.format("%.3f", bobotAlternatif[k][i]);
-//            }
-//        }
-//        tablePerbandinganAlternatif.setModel(new DefaultTableModel(data, header));
-//    }
-//
-//    private void tampilTabelHasilAkhir(double[] nilaiAkhir, int[] rangking) {
-//        String[] header = {"Peringkat", "Kode", "Nama Auditor", "Nilai Akhir"};
-//        Object[][] data = new Object[rangking.length][4];
-//        for (int rank = 0; rank < rangking.length; rank++) {
-//            int idx = rangking[rank];
-//            data[rank][0] = rank + 1;
-//            data[rank][1] = auditorList.get(idx).getKodeAuditor();
-//            data[rank][2] = auditorList.get(idx).getNamaAuditor();
-//            data[rank][3] = String.format("%.3f", nilaiAkhir[idx]);
-//        }
-//        jTable3.setModel(new DefaultTableModel(data, header));
-//    }
-//
-//    private void navigateTo(javax.swing.JPanel view) {
-//        java.awt.Container parent = this.getParent();
-//        if (parent != null) {
-//            parent.removeAll();
-//            parent.add(view);
-//            parent.repaint();
-//            parent.revalidate();
-//        }
-//    }
-//
-//    private void resetHasil() {
-//        jTable1.setModel(new DefaultTableModel());
-//        tablePerbandinganAlternatif.setModel(new DefaultTableModel());
-//        jTable3.setModel(new DefaultTableModel());
-//        lblCi.setText("CI");
-//        lblCr.setText("CR");
-//        lblLambda.setText("Lambda");
-//        lblCi1.setText("CI");
-//        lblCr1.setText("CR");
-//        lblLambda1.setText("Lambda");
-//    }
+    private void hitungHasilAkhir() {
+        subList = subDAO.getAll();
+        pelatihList = pelatihDAO.getAll();
+
+        if (subList.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Data sub-kriteria belum tersedia!");
+            return;
+        }
+        if (pelatihList.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Data pelatih belum tersedia!");
+            return;
+        }
+
+        int nSub = subList.size();
+        int nPelatih = pelatihList.size();
+
+        // 1. Hitung bobot sub-kriteria dari matriks 9x9
+        double[][] matriksSub = perbandinganSubDAO.buildMatriks(subList);
+        AHPCalculator.HasilAHP hasilSub = AHPCalculator.proses(matriksSub);
+
+        // Update bobot di database
+        for (int i = 0; i < nSub; i++) {
+            SubKriteria sub = subList.get(i);
+            sub.setBobot(hasilSub.bobotPrioritas[i]);
+            subDAO.update(sub);
+        }
+
+        // Tampilkan tabel normalisasi + bobot sub-kriteria
+        tampilTabelSubKriteria(hasilSub);
+
+        lblCi.setText(String.format("%.4f", hasilSub.ci));
+        lblCr.setText(String.format("%.4f", hasilSub.cr));
+        lblLambda.setText(String.format("%.4f", hasilSub.lambdaMax));
+
+        if (!hasilSub.konsisten) {
+            JOptionPane.showMessageDialog(this,
+                "Perbandingan sub-kriteria TIDAK konsisten!\n"
+                + "CR = " + String.format("%.4f", hasilSub.cr) + " (harus <= 0.10)\n"
+                + "Silakan perbaiki nilai perbandingan.",
+                "Peringatan", JOptionPane.WARNING_MESSAGE);
+        }
+
+        // 2. Hitung bobot lokal pelatih per sub-kriteria
+        double[][] bobotAlternatif = new double[nSub][nPelatih];
+        double ciAltTotal = 0, crAltTotal = 0, lambdaAltTotal = 0;
+        boolean allConsistent = true;
+
+        for (int k = 0; k < nSub; k++) {
+            int idSub = subList.get(k).getIdSub();
+            double[][] matriksAlt = perbandinganAltDAO.buildMatriks(idSub, pelatihList);
+            AHPCalculator.HasilAHP hasilAlt = AHPCalculator.proses(matriksAlt);
+            bobotAlternatif[k] = hasilAlt.bobotPrioritas;
+            ciAltTotal += hasilAlt.ci;
+            crAltTotal += hasilAlt.cr;
+            lambdaAltTotal += hasilAlt.lambdaMax;
+            if (!hasilAlt.konsisten) allConsistent = false;
+        }
+
+        tampilTabelAlternatif(bobotAlternatif);
+
+        lblCi1.setText(String.format("%.4f", ciAltTotal / nSub));
+        lblCr1.setText(String.format("%.4f", crAltTotal / nSub));
+        lblLambda1.setText(String.format("%.4f", lambdaAltTotal / nSub));
+
+        if (!allConsistent) {
+            JOptionPane.showMessageDialog(this,
+                "Beberapa perbandingan alternatif TIDAK konsisten!\n"
+                + "Silakan periksa CR untuk setiap sub-kriteria.",
+                "Peringatan", JOptionPane.WARNING_MESSAGE);
+        }
+
+        // 3. Hitung skor akhir & ranking
+        double[] nilaiAkhir = AHPCalculator.hitungNilaiAkhir(hasilSub.bobotPrioritas, bobotAlternatif);
+        int[] rangking = AHPCalculator.getRangking(nilaiAkhir);
+
+        // Simpan ke database
+        hasilDAO.hapusAll();
+        for (int rank = 0; rank < rangking.length; rank++) {
+            int idx = rangking[rank];
+            hasilDAO.simpanHasil(pelatihList.get(idx).getIdPelatih(), nilaiAkhir[idx], rank + 1);
+        }
+
+        tampilTabelHasilAkhir(nilaiAkhir, rangking);
+        JOptionPane.showMessageDialog(this, "Perhitungan AHP selesai! Hasil telah disimpan.");
+    }
+
+    private void tampilTabelSubKriteria(AHPCalculator.HasilAHP hasil) {
+        int n = subList.size();
+
+        String[] header = new String[n + 2];
+        header[0] = "SubKriteria";
+        for (int i = 0; i < n; i++) {
+            header[i + 1] = subList.get(i).getKodeSub();
+        }
+        header[n + 1] = "Bobot";
+
+        Object[][] data = new Object[n][n + 2];
+        for (int i = 0; i < n; i++) {
+            data[i][0] = subList.get(i).getKodeSub() + " - " + subList.get(i).getNamaSub();
+            for (int j = 0; j < n; j++) {
+                data[i][j + 1] = String.format("%.4f", hasil.matriksNormalisasi[i][j]);
+            }
+            data[i][n + 1] = String.format("%.4f", hasil.bobotPrioritas[i]);
+        }
+        jTable1.setModel(new DefaultTableModel(data, header));
+    }
+
+    private void tampilTabelAlternatif(double[][] bobotAlternatif) {
+        int nSub = subList.size();
+        int nPelatih = pelatihList.size();
+
+        String[] header = new String[nSub + 1];
+        header[0] = "Pelatih";
+        for (int k = 0; k < nSub; k++) {
+            header[k + 1] = subList.get(k).getKodeSub();
+        }
+
+        Object[][] data = new Object[nPelatih][nSub + 1];
+        for (int i = 0; i < nPelatih; i++) {
+            data[i][0] = pelatihList.get(i).getKodePelatih() + " - " + pelatihList.get(i).getNamaPelatih();
+            for (int k = 0; k < nSub; k++) {
+                data[i][k + 1] = String.format("%.4f", bobotAlternatif[k][i]);
+            }
+        }
+        tablePerbandinganAlternatif.setModel(new DefaultTableModel(data, header));
+    }
+
+    private void tampilTabelHasilAkhir(double[] nilaiAkhir, int[] rangking) {
+        String[] header = {"Peringkat", "Kode", "Nama Pelatih", "Nilai Akhir", "Persentase"};
+        Object[][] data = new Object[rangking.length][5];
+        for (int rank = 0; rank < rangking.length; rank++) {
+            int idx = rangking[rank];
+            data[rank][0] = rank + 1;
+            data[rank][1] = pelatihList.get(idx).getKodePelatih();
+            data[rank][2] = pelatihList.get(idx).getNamaPelatih();
+            data[rank][3] = String.format("%.4f", nilaiAkhir[idx]);
+            data[rank][4] = String.format("%.2f%%", nilaiAkhir[idx] * 100);
+        }
+        jTable3.setModel(new DefaultTableModel(data, header));
+    }
+
+    private void navigateTo(javax.swing.JPanel view) {
+        java.awt.Container parent = this.getParent();
+        if (parent != null) {
+            parent.removeAll();
+            parent.add(view);
+            parent.repaint();
+            parent.revalidate();
+        }
+    }
+
+    private void resetHasil() {
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Reset akan menghapus semua hasil perhitungan.\nLanjutkan?",
+            "Konfirmasi Reset", JOptionPane.YES_NO_OPTION);
+        if (confirm != JOptionPane.YES_OPTION) return;
+
+        hasilDAO.hapusAll();
+        jTable1.setModel(new DefaultTableModel());
+        tablePerbandinganAlternatif.setModel(new DefaultTableModel());
+        jTable3.setModel(new DefaultTableModel());
+        lblCi.setText("CI");
+        lblCr.setText("CR");
+        lblLambda.setText("Lambda");
+        lblCi1.setText("CI");
+        lblCr1.setText("CR");
+        lblLambda1.setText("Lambda");
+        JOptionPane.showMessageDialog(this, "Hasil telah direset!");
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -492,11 +541,11 @@ public class view_prosesahp extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-//        resetHasil();
+        resetHasil();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-//        hitungHasilAkhir();
+        hitungHasilAkhir();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void lblCiFocusGained(java.awt.event.FocusEvent evt) {}

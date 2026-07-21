@@ -4,11 +4,12 @@
  */
 package views;
 
-import dao.KriteriaDAO;
 import dao.PelatihDAO;
+import dao.PerbandinganAlternatifDAO;
 import dao.SubKriteriaDAO;
 import java.util.List;
-import models.Kriteria;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import models.Pelatih;
 import models.SubKriteria;
 
@@ -18,39 +19,59 @@ import models.SubKriteria;
  */
 public class view_perbandinganalternatif extends javax.swing.JPanel {
 
-//    private KriteriaDAO kriteriaDAO;
-//    private AuditorDAO auditorDAO;
-//    private PerbandinganDAO perbandinganDAO;
-//    private List<Kriteria> kriteriaList;
-//    private List<Auditor> auditorList;
-    /**
-     * Creates new form view_dashboard
-     */
+    private PerbandinganAlternatifDAO perbandinganDAO;
+    private List<Pelatih> pelatihList;
+    private List<SubKriteria> subList;
+
     public view_perbandinganalternatif() {
         initComponents();
+        perbandinganDAO = new PerbandinganAlternatifDAO();
 
-//        kriteriaDAO = new KriteriaDAO();
-//        auditorDAO = new AuditorDAO();
-//        perbandinganDAO = new PerbandinganDAO();
-        loadData();
+        // Ubah label agar sesuai fungsi
+        jLabel6.setText("Sub Kriteria");
+        jLabel3.setText("Pelatih 1");
+        jLabel4.setText("Pelatih 2");
+
         loadNilaiComboBox();
-//        addButtonListeners();
-//        refreshTabel();
+        loadData();
+        refreshTabel();
+
+        // Wire button listeners (btnubah, btnhapus, btnbatal tidak punya GEN listener)
+        btnubah.addActionListener(e -> simpanPerbandingan());
+        btnhapus.addActionListener(e -> hapusPerbandingan());
+        btnbatal.addActionListener(e -> resetForm());
+
+        // Refresh tabel saat sub-kriteria berubah
+        tnama.addActionListener(e -> refreshTabel());
     }
 
     private void loadData() {
-
-        PelatihDAO pelatihDAO = new PelatihDAO();
-        KriteriaDAO kriteriaDAO = new KriteriaDAO();
         SubKriteriaDAO subDAO = new SubKriteriaDAO();
+        PelatihDAO pelatihDAO = new PelatihDAO();
 
-        pelatihDAO.loadPelatihToComboBox(tnama);
-        kriteriaDAO.loadKriteriaToComboBox1(tkriteria1);
-        subDAO.loadSubKriteriaToComboBox(tkriteria2);
+        subList = subDAO.getAll();
+        pelatihList = pelatihDAO.getAll();
 
+        // tnama → Sub Kriteria selector
+        tnama.removeAllItems();
+        for (SubKriteria sub : subList) {
+            tnama.addItem(sub.getKodeSub() + " - " + sub.getNamaSub());
+        }
+
+        // tkriteria1 → Pelatih 1, tkriteria2 → Pelatih 2
+        tkriteria1.removeAllItems();
+        tkriteria2.removeAllItems();
+        for (Pelatih p : pelatihList) {
+            String label = p.getKodePelatih() + " - " + p.getNamaPelatih();
+            tkriteria1.addItem(label);
+            tkriteria2.addItem(label);
+        }
+        if (tkriteria2.getItemCount() > 1) {
+            tkriteria2.setSelectedIndex(1);
+        }
     }
 
-     private void loadNilaiComboBox() {
+    private void loadNilaiComboBox() {
         tnilai.removeAllItems();
         tnilai.addItem("1 - Sama Penting");
         tnilai.addItem("2 - Mendekati Sedikit Lebih Penting");
@@ -70,172 +91,102 @@ public class view_perbandinganalternatif extends javax.swing.JPanel {
         tnilai.addItem("1/8 - Mendekati Mutlak Kurang Penting (kebalikan)");
         tnilai.addItem("1/9 - Mutlak Kurang Penting (kebalikan)");
     }
-//
-//    private void loadSubKriteria() {
-//        Kriteria kriteriaTerpilih = (Kriteria) tkriteria.getSelectedItem();
-//        tsub.removeAllItems();
-//
-//        if (kriteriaTerpilih == null) {
-//            return;
-//        }
-//
-//        List<SubKriteria> subList = SubKriteriaDAO.getByKriteria(kriteriaTerpilih.getIdKriteria());
-//        for (SubKriteria sk : subList) {
-//            tsub.addItem(sk);
-//        }
-//    }
 
-//    private void loadSubKriteria() {
-//        Kriteria kriteriaTerpilih = (Kriteria) tkriteria.getSelectedItem();
-//        tsub.removeAllItems();
-//
-//        if (kriteriaTerpilih == null) {
-//            return;
-//        }
-//
-//        List<SubKriteria> subList = SubKriteriaDAO.getByKriteria(kriteriaTerpilih.getIdKriteria());
-//        for (SubKriteria sk : subList) {
-//            tsub.addItem(sk);
-//        }
-//    }
-//    private void loadData() {
-//        kriteriaList = kriteriaDAO.getAll();
-//        auditorList = auditorDAO.getAll();
-//
-//        // ComboBox Nama Kriteria (pilih kriteria mana yang sedang dibandingkan)
-//        tnama.removeAllItems();
-//        for (Kriteria k : kriteriaList) {
-//            tnama.addItem(k.getKodeKriteria() + " - " + k.getNamaKriteria());
-//        }
-//
-//        // ComboBox Alternatif 1 dan 2
-//        tkriteria1.removeAllItems();
-//        tkriteria2.removeAllItems();
-//        for (Auditor a : auditorList) {
-//            tkriteria1.addItem(a.getKodeAuditor() + " - " + a.getNamaAuditor());
-//            tkriteria2.addItem(a.getKodeAuditor() + " - " + a.getNamaAuditor());
-//        }
-//        if (tkriteria2.getItemCount() > 1) {
-//            tkriteria2.setSelectedIndex(1);
-//        }
-//
-//        // Listener untuk refresh tabel saat kriteria berubah
-//        tnama.addActionListener(e -> refreshTabel());
-//    }
-//
-   
-//
-//    private double parseNilai() {
-//        String selected = (String) tnilai.getSelectedItem();
-//        if (selected == null) return 1;
-//        String angka = selected.split(" - ")[0].trim();
-//        if (angka.startsWith("1/")) {
-//            int denom = Integer.parseInt(angka.substring(2));
-//            return 1.0 / denom;
-//        }
-//        return Double.parseDouble(angka);
-//    }
-//
-//    private void addButtonListeners() {
-//        btnsimpan.addActionListener(e -> simpanPerbandingan());
-//        btnubah.addActionListener(e -> simpanPerbandingan());
-//        btnhapus.addActionListener(e -> hapusPerbandingan());
-//        btnbatal.addActionListener(e -> resetForm());
-//    }
-//
-//    private void simpanPerbandingan() {
-//        int idxKriteria = tnama.getSelectedIndex();
-//        int idx1 = tkriteria1.getSelectedIndex();
-//        int idx2 = tkriteria2.getSelectedIndex();
-//
-//        if (idxKriteria < 0 || idx1 < 0 || idx2 < 0) return;
-//        if (idx1 == idx2) {
-//            JOptionPane.showMessageDialog(this, "Alternatif 1 dan Alternatif 2 tidak boleh sama!");
-//            return;
-//        }
-//
-//        int idKriteria = kriteriaList.get(idxKriteria).getIdKriteria();
-//        int idAuditor1 = auditorList.get(idx1).getIdAuditor();
-//        int idAuditor2 = auditorList.get(idx2).getIdAuditor();
-//        double nilai = parseNilai();
-//
-//        boolean ok = perbandinganDAO.simpanPerbandinganAlternatif(idKriteria, idAuditor1, idAuditor2, nilai);
-//        if (ok) {
-//            JOptionPane.showMessageDialog(this, "Perbandingan alternatif berhasil disimpan!");
-//            refreshTabel();
-//        } else {
-//            JOptionPane.showMessageDialog(this, "Gagal menyimpan perbandingan!");
-//        }
-//    }
-//
-//    private void hapusPerbandingan() {
-//        int idxKriteria = tnama.getSelectedIndex();
-//        int idx1 = tkriteria1.getSelectedIndex();
-//        int idx2 = tkriteria2.getSelectedIndex();
-//        if (idxKriteria < 0 || idx1 < 0 || idx2 < 0 || idx1 == idx2) return;
-//
-//        int idKriteria = kriteriaList.get(idxKriteria).getIdKriteria();
-//        int idAuditor1 = auditorList.get(idx1).getIdAuditor();
-//        int idAuditor2 = auditorList.get(idx2).getIdAuditor();
-//
-//        boolean ok = perbandinganDAO.hapusPerbandinganAlternatif(idKriteria, idAuditor1, idAuditor2);
-//        if (ok) {
-//            JOptionPane.showMessageDialog(this, "Perbandingan berhasil dihapus!");
-//            refreshTabel();
-//        }
-//    }
-//
-//    private void resetForm() {
-//        if (tkriteria1.getItemCount() > 0) tkriteria1.setSelectedIndex(0);
-//        if (tkriteria2.getItemCount() > 1) tkriteria2.setSelectedIndex(1);
-//        if (tnilai.getItemCount() > 0) tnilai.setSelectedIndex(0);
-//    }
-//
-//    private void refreshTabel() {
-//        int idxKriteria = tnama.getSelectedIndex();
-//        if (idxKriteria < 0 || auditorList == null || auditorList.isEmpty()) return;
-//
-//        int idKriteria = kriteriaList.get(idxKriteria).getIdKriteria();
-//        int n = auditorList.size();
-//        double[][] matriks = perbandinganDAO.buildMatriksAlternatif(idKriteria, auditorList);
-//
-//        // Tabel matriks perbandingan
-//        String[] header = new String[n + 1];
-//        header[0] = "Alternatif";
-//        for (int i = 0; i < n; i++) {
-//            header[i + 1] = auditorList.get(i).getKodeAuditor();
-//        }
-//
-//        Object[][] dataMatriks = new Object[n][n + 1];
-//        for (int i = 0; i < n; i++) {
-//            dataMatriks[i][0] = auditorList.get(i).getKodeAuditor();
-//            for (int j = 0; j < n; j++) {
-//                dataMatriks[i][j + 1] = String.format("%.3f", matriks[i][j]);
-//            }
-//        }
-//        tblmatriksperbandinganalternatif.setModel(new DefaultTableModel(dataMatriks, header));
-//
-//        // Tabel normalisasi + bobot
-//        double[][] normalized = AHPCalculator.normalisasi(matriks);
-//        double[] bobot = AHPCalculator.hitungBobotPrioritas(matriks);
-//
-//        String[] headerNorm = new String[n + 2];
-//        headerNorm[0] = "Alternatif";
-//        for (int i = 0; i < n; i++) {
-//            headerNorm[i + 1] = auditorList.get(i).getKodeAuditor();
-//        }
-//        headerNorm[n + 1] = "Bobot";
-//
-//        Object[][] dataNorm = new Object[n][n + 2];
-//        for (int i = 0; i < n; i++) {
-//            dataNorm[i][0] = auditorList.get(i).getKodeAuditor();
-//            for (int j = 0; j < n; j++) {
-//                dataNorm[i][j + 1] = String.format("%.3f", normalized[i][j]);
-//            }
-//            dataNorm[i][n + 1] = String.format("%.3f", bobot[i]);
-//        }
-//        tblnormalisasialternatif.setModel(new DefaultTableModel(dataNorm, headerNorm));
-//    }
+    private double parseNilai() {
+        String selected = (String) tnilai.getSelectedItem();
+        if (selected == null) return 1;
+        String angka = selected.split(" - ")[0].trim();
+        if (angka.startsWith("1/")) {
+            int denom = Integer.parseInt(angka.substring(2));
+            return 1.0 / denom;
+        }
+        return Double.parseDouble(angka);
+    }
+
+    private void simpanPerbandingan() {
+        int idxSub = tnama.getSelectedIndex();
+        int idx1 = tkriteria1.getSelectedIndex();
+        int idx2 = tkriteria2.getSelectedIndex();
+
+        if (idxSub < 0 || idx1 < 0 || idx2 < 0) return;
+        if (idx1 == idx2) {
+            JOptionPane.showMessageDialog(this, "Pelatih 1 dan Pelatih 2 tidak boleh sama!");
+            return;
+        }
+
+        int idSub = subList.get(idxSub).getIdSub();
+        int idPelatih1 = pelatihList.get(idx1).getIdPelatih();
+        int idPelatih2 = pelatihList.get(idx2).getIdPelatih();
+        double nilai = parseNilai();
+
+        boolean ok = perbandinganDAO.simpan(idSub, idPelatih1, idPelatih2, nilai);
+        if (ok) {
+            JOptionPane.showMessageDialog(this, "Perbandingan berhasil disimpan!");
+            refreshTabel();
+        } else {
+            JOptionPane.showMessageDialog(this, "Gagal menyimpan perbandingan!");
+        }
+    }
+
+    private void hapusPerbandingan() {
+        int idxSub = tnama.getSelectedIndex();
+        int idx1 = tkriteria1.getSelectedIndex();
+        int idx2 = tkriteria2.getSelectedIndex();
+        if (idxSub < 0 || idx1 < 0 || idx2 < 0 || idx1 == idx2) return;
+
+        int idSub = subList.get(idxSub).getIdSub();
+        int idPelatih1 = pelatihList.get(idx1).getIdPelatih();
+        int idPelatih2 = pelatihList.get(idx2).getIdPelatih();
+
+        boolean ok = perbandinganDAO.hapus(idSub, idPelatih1, idPelatih2);
+        if (ok) {
+            JOptionPane.showMessageDialog(this, "Perbandingan berhasil dihapus!");
+            refreshTabel();
+        }
+    }
+
+    private void resetForm() {
+        if (tkriteria1.getItemCount() > 0) tkriteria1.setSelectedIndex(0);
+        if (tkriteria2.getItemCount() > 1) tkriteria2.setSelectedIndex(1);
+        if (tnilai.getItemCount() > 0) tnilai.setSelectedIndex(0);
+    }
+
+    private void refreshTabel() {
+        int idxSub = tnama.getSelectedIndex();
+        if (idxSub < 0 || pelatihList == null || pelatihList.isEmpty()) {
+            tblmatriksperbandinganalternatif.setModel(new DefaultTableModel());
+            return;
+        }
+
+        int idSub = subList.get(idxSub).getIdSub();
+        int n = pelatihList.size();
+        double[][] matriks = perbandinganDAO.buildMatriks(idSub, pelatihList);
+
+        String[] header = new String[n + 1];
+        header[0] = "Pelatih";
+        for (int i = 0; i < n; i++) {
+            header[i + 1] = pelatihList.get(i).getKodePelatih();
+        }
+
+        Object[][] data = new Object[n][n + 1];
+        for (int i = 0; i < n; i++) {
+            data[i][0] = pelatihList.get(i).getKodePelatih() + " - " + pelatihList.get(i).getNamaPelatih();
+            for (int j = 0; j < n; j++) {
+                if (i == j) {
+                    data[i][j + 1] = "1.000";
+                } else {
+                    double val = matriks[i][j];
+                    if (val < 1 && val > 0) {
+                        int denom = (int) Math.round(1.0 / val);
+                        data[i][j + 1] = "1/" + denom;
+                    } else {
+                        data[i][j + 1] = String.format("%.3f", val);
+                    }
+                }
+            }
+        }
+        tblmatriksperbandinganalternatif.setModel(new DefaultTableModel(data, header));
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -429,7 +380,7 @@ public class view_perbandinganalternatif extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnsimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsimpanActionPerformed
-
+        simpanPerbandingan();
     }//GEN-LAST:event_btnsimpanActionPerformed
 
 

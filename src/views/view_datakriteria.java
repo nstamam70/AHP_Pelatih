@@ -25,7 +25,7 @@ public class view_datakriteria extends javax.swing.JPanel {
         initComponents();
         LoadTableKriteria();
         generateKodeKriteria();
-        tkode.disable();
+        tkode.setEnabled(false);
     }
 
     private void LoadTableKriteria() {
@@ -85,7 +85,7 @@ public class view_datakriteria extends javax.swing.JPanel {
 
         tkode.setText("");
         tnama.setText("");
-        tkode.requestFocus();
+        tnama.requestFocus();
     }
 
     /**

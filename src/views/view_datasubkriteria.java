@@ -391,30 +391,28 @@ public class view_datasubkriteria extends javax.swing.JPanel {
     }//GEN-LAST:event_btnbatalActionPerformed
 
     private void btnhapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnhapusActionPerformed
-        //// 1. Cek apakah ada data yang dipilih dari tabel
-        //        if (idKriteriaTerpilih == -1) {
-        //            JOptionPane.showMessageDialog(this, "Pilih data kriteria yang ingin dihapus dari tabel terlebih dahulu!");
-        //            return;
-        //        }
-        //
-        //        // 2. Konfirmasi hapus
-        //        int konfirmasi = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus kriteria ini?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
-        //
-        //        if (konfirmasi == JOptionPane.YES_OPTION) {
-        //            // 3. Eksekusi hapus lewat DAO
-        //            dao.KriteriaDAO daoKriteria = new dao.KriteriaDAO();
-        //            boolean berhasil = daoKriteria.delete(idKriteriaTerpilih);
-        //
-        //            if (berhasil) {
-        //                JOptionPane.showMessageDialog(this, "Data Kriteria berhasil dihapus!");
-        //                idKriteriaTerpilih = -1; // Reset ID
-        //                resetForm();
-        //                 LoadTableKriteria();
-        //                 generateKodeKriteria();
-        //            } else {
-        //                JOptionPane.showMessageDialog(this, "Gagal menghapus data Kriteria.");
-        //            }
-        //        }
+        if (idKriteriaTerpilih <= 0) {
+            JOptionPane.showMessageDialog(this, "Pilih data sub kriteria yang ingin dihapus dari tabel terlebih dahulu!");
+            return;
+        }
+
+        int konfirmasi = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus sub kriteria ini?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
+
+        if (konfirmasi == JOptionPane.YES_OPTION) {
+            SubKriteriaDAO dao = new SubKriteriaDAO();
+            boolean berhasil = dao.delete(idKriteriaTerpilih);
+
+            if (berhasil) {
+                JOptionPane.showMessageDialog(this, "Data Sub Kriteria berhasil dihapus!");
+                idKriteriaTerpilih = -1;
+                resetForm();
+                LoadTableSubKriteria();
+                generateKodeSubKriteria();
+                btnsimpan.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Gagal menghapus data Sub Kriteria.");
+            }
+        }
     }//GEN-LAST:event_btnhapusActionPerformed
 
     private void btnubahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnubahActionPerformed

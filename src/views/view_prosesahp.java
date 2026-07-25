@@ -81,14 +81,14 @@ public class view_prosesahp extends javax.swing.JPanel {
         // Tampilkan tabel normalisasi + bobot sub-kriteria
         tampilTabelSubKriteria(hasilSub);
 
-        lblCi.setText(String.format("%.4f", hasilSub.ci));
-        lblCr.setText(String.format("%.4f", hasilSub.cr));
-        lblLambda.setText(String.format("%.4f", hasilSub.lambdaMax));
+        lblCi.setText(String.format("%.3f", hasilSub.ci));
+        lblCr.setText(String.format("%.3f", hasilSub.cr));
+        lblLambda.setText(String.format("%.3f", hasilSub.lambdaMax));
 
         if (!hasilSub.konsisten) {
             JOptionPane.showMessageDialog(this,
                 "Perbandingan sub-kriteria TIDAK konsisten!\n"
-                + "CR = " + String.format("%.4f", hasilSub.cr) + " (harus <= 0.10)\n"
+                + "CR = " + String.format("%.3f", hasilSub.cr) + " (harus <= 0.10)\n"
                 + "Silakan perbaiki nilai perbandingan.",
                 "Peringatan", JOptionPane.WARNING_MESSAGE);
         }
@@ -111,9 +111,9 @@ public class view_prosesahp extends javax.swing.JPanel {
 
         tampilTabelAlternatif(bobotAlternatif);
 
-        lblCi1.setText(String.format("%.4f", ciAltTotal / nSub));
-        lblCr1.setText(String.format("%.4f", crAltTotal / nSub));
-        lblLambda1.setText(String.format("%.4f", lambdaAltTotal / nSub));
+        lblCi1.setText(String.format("%.3f", ciAltTotal / nSub));
+        lblCr1.setText(String.format("%.3f", crAltTotal / nSub));
+        lblLambda1.setText(String.format("%.3f", lambdaAltTotal / nSub));
 
         if (!allConsistent) {
             JOptionPane.showMessageDialog(this,
@@ -151,11 +151,16 @@ public class view_prosesahp extends javax.swing.JPanel {
         for (int i = 0; i < n; i++) {
             data[i][0] = subList.get(i).getKodeSub() + " - " + subList.get(i).getNamaSub();
             for (int j = 0; j < n; j++) {
-                data[i][j + 1] = String.format("%.4f", hasil.matriksNormalisasi[i][j]);
+                data[i][j + 1] = String.format("%.3f", hasil.matriksNormalisasi[i][j]);
             }
-            data[i][n + 1] = String.format("%.4f", hasil.bobotPrioritas[i]);
+            data[i][n + 1] = String.format("%.3f", hasil.bobotPrioritas[i]);
         }
         jTable1.setModel(new DefaultTableModel(data, header));
+        jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(200);
+        for (int i = 1; i < n + 2; i++) {
+            jTable1.getColumnModel().getColumn(i).setPreferredWidth(60);
+        }
     }
 
     private void tampilTabelAlternatif(double[][] bobotAlternatif) {
@@ -172,10 +177,15 @@ public class view_prosesahp extends javax.swing.JPanel {
         for (int i = 0; i < nPelatih; i++) {
             data[i][0] = pelatihList.get(i).getKodePelatih() + " - " + pelatihList.get(i).getNamaPelatih();
             for (int k = 0; k < nSub; k++) {
-                data[i][k + 1] = String.format("%.4f", bobotAlternatif[k][i]);
+                data[i][k + 1] = String.format("%.3f", bobotAlternatif[k][i]);
             }
         }
         tablePerbandinganAlternatif.setModel(new DefaultTableModel(data, header));
+        tablePerbandinganAlternatif.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        tablePerbandinganAlternatif.getColumnModel().getColumn(0).setPreferredWidth(200);
+        for (int i = 1; i <= nSub; i++) {
+            tablePerbandinganAlternatif.getColumnModel().getColumn(i).setPreferredWidth(60);
+        }
     }
 
     private void tampilTabelHasilAkhir(double[] nilaiAkhir, int[] rangking) {
@@ -186,7 +196,7 @@ public class view_prosesahp extends javax.swing.JPanel {
             data[rank][0] = rank + 1;
             data[rank][1] = pelatihList.get(idx).getKodePelatih();
             data[rank][2] = pelatihList.get(idx).getNamaPelatih();
-            data[rank][3] = String.format("%.4f", nilaiAkhir[idx]);
+            data[rank][3] = String.format("%.3f", nilaiAkhir[idx]);
             data[rank][4] = String.format("%.2f%%", nilaiAkhir[idx] * 100);
         }
         jTable3.setModel(new DefaultTableModel(data, header));

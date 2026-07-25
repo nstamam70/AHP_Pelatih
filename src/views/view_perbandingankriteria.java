@@ -20,112 +20,90 @@ public class view_perbandingankriteria extends javax.swing.JPanel {
     private PerbandinganSubKriteriaDAO perbandinganDAO;
     private List<SubKriteria> subList;
 
+    // ponytail: nilai options reused by dialog, defined once
+    private static final String[] NILAI_OPTIONS = {
+        "1 - Sama Penting",
+        "2 - Mendekati Sedikit Lebih Penting",
+        "3 - Sedikit Lebih Penting",
+        "4 - Mendekati Lebih Penting",
+        "5 - Lebih Penting",
+        "6 - Mendekati Sangat Penting",
+        "7 - Sangat Penting",
+        "8 - Mendekati Mutlak Lebih Penting",
+        "9 - Mutlak Lebih Penting",
+        "1/2 - Mendekati Sama Penting (kebalikan)",
+        "1/3 - Sedikit Kurang Penting (kebalikan)",
+        "1/4 - Mendekati Kurang Penting (kebalikan)",
+        "1/5 - Kurang Penting (kebalikan)",
+        "1/6 - Mendekati Sangat Kurang Penting (kebalikan)",
+        "1/7 - Sangat Kurang Penting (kebalikan)",
+        "1/8 - Mendekati Mutlak Kurang Penting (kebalikan)",
+        "1/9 - Mutlak Kurang Penting (kebalikan)"
+    };
+
     public view_perbandingankriteria() {
         initComponents();
         perbandinganDAO = new PerbandinganSubKriteriaDAO();
-        loadNilaiComboBox();
+
+        // ponytail: hide old form inputs — all input now via table click
+        jLabel3.setVisible(false);
+        tkriteria1.setVisible(false);
+        jLabel4.setVisible(false);
+        tkriteria2.setVisible(false);
+        jLabel5.setVisible(false);
+        tnilai.setVisible(false);
+        btnsimpan.setVisible(false);
+        btnubah.setVisible(false);
+        btnhapus.setVisible(false);
+        btnbatal.setVisible(false);
+        jSeparator3.setVisible(false);
+        jSeparator4.setVisible(false);
+
         loadData();
         refreshTabel();
 
-        // Wire button listeners
-        btnsimpan.addActionListener(e -> simpanPerbandingan());
-        btnubah.addActionListener(e -> simpanPerbandingan());
-        btnhapus.addActionListener(e -> hapusPerbandingan());
-        btnbatal.addActionListener(e -> resetForm());
+        tblmatriksperbandingankriteria.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                handleTableClick(e);
+            }
+        });
     }
 
     private void loadData() {
         SubKriteriaDAO subDAO = new SubKriteriaDAO();
         subList = subDAO.getAll();
-
-        tkriteria1.removeAllItems();
-        tkriteria2.removeAllItems();
-
-        for (SubKriteria sub : subList) {
-            String label = sub.getKodeSub() + " - " + sub.getNamaSub();
-            tkriteria1.addItem(label);
-            tkriteria2.addItem(label);
-        }
-
-        if (tkriteria2.getItemCount() > 1) {
-            tkriteria2.setSelectedIndex(1);
-        }
     }
 
-    private void loadNilaiComboBox() {
-        tnilai.removeAllItems();
-        tnilai.addItem("1 - Sama Penting");
-        tnilai.addItem("2 - Mendekati Sedikit Lebih Penting");
-        tnilai.addItem("3 - Sedikit Lebih Penting");
-        tnilai.addItem("4 - Mendekati Lebih Penting");
-        tnilai.addItem("5 - Lebih Penting");
-        tnilai.addItem("6 - Mendekati Sangat Penting");
-        tnilai.addItem("7 - Sangat Penting");
-        tnilai.addItem("8 - Mendekati Mutlak Lebih Penting");
-        tnilai.addItem("9 - Mutlak Lebih Penting");
-        tnilai.addItem("1/2 - Mendekati Sama Penting (kebalikan)");
-        tnilai.addItem("1/3 - Sedikit Kurang Penting (kebalikan)");
-        tnilai.addItem("1/4 - Mendekati Kurang Penting (kebalikan)");
-        tnilai.addItem("1/5 - Kurang Penting (kebalikan)");
-        tnilai.addItem("1/6 - Mendekati Sangat Kurang Penting (kebalikan)");
-        tnilai.addItem("1/7 - Sangat Kurang Penting (kebalikan)");
-        tnilai.addItem("1/8 - Mendekati Mutlak Kurang Penting (kebalikan)");
-        tnilai.addItem("1/9 - Mutlak Kurang Penting (kebalikan)");
-    }
+    private void handleTableClick(java.awt.event.MouseEvent e) {
+        int row = tblmatriksperbandingankriteria.rowAtPoint(e.getPoint());
+        int col = tblmatriksperbandingankriteria.columnAtPoint(e.getPoint());
+        if (row < 0 || col <= 0) return;
+        if (row == col - 1) return;
 
-    private double parseNilai() {
-        String selected = (String) tnilai.getSelectedItem();
-        if (selected == null) return 1;
-        String angka = selected.split(" - ")[0].trim();
+        if (subList == null || subList.size() <= row || subList.size() <= col - 1) return;
+
+        SubKriteria s1 = subList.get(row);
+        SubKriteria s2 = subList.get(col - 1);
+
+        String title = s1.getNamaSub() + " vs " + s2.getNamaSub();
+        Object result = JOptionPane.showInputDialog(this, title, "Pilih Nilai Perbandingan",
+                JOptionPane.PLAIN_MESSAGE, null, NILAI_OPTIONS, NILAI_OPTIONS[0]);
+        if (result == null) return;
+
+        String angka = result.toString().split(" - ")[0].trim();
+        double nilai;
         if (angka.startsWith("1/")) {
-            int denom = Integer.parseInt(angka.substring(2));
-            return 1.0 / denom;
-        }
-        return Double.parseDouble(angka);
-    }
-
-    private void simpanPerbandingan() {
-        int idx1 = tkriteria1.getSelectedIndex();
-        int idx2 = tkriteria2.getSelectedIndex();
-        if (idx1 < 0 || idx2 < 0) return;
-
-        if (idx1 == idx2) {
-            JOptionPane.showMessageDialog(this, "Sub Kriteria 1 dan Sub Kriteria 2 tidak boleh sama!");
-            return;
-        }
-
-        int id1 = subList.get(idx1).getIdSub();
-        int id2 = subList.get(idx2).getIdSub();
-        double nilai = parseNilai();
-
-        boolean ok = perbandinganDAO.simpan(id1, id2, nilai);
-        if (ok) {
-            JOptionPane.showMessageDialog(this, "Perbandingan berhasil disimpan!");
-            refreshTabel();
+            nilai = 1.0 / Integer.parseInt(angka.substring(2));
         } else {
+            nilai = Double.parseDouble(angka);
+        }
+
+        boolean ok = perbandinganDAO.simpan(s1.getIdSub(), s2.getIdSub(), nilai);
+        if (!ok) {
             JOptionPane.showMessageDialog(this, "Gagal menyimpan perbandingan!");
         }
-    }
-
-    private void hapusPerbandingan() {
-        int idx1 = tkriteria1.getSelectedIndex();
-        int idx2 = tkriteria2.getSelectedIndex();
-        if (idx1 < 0 || idx2 < 0 || idx1 == idx2) return;
-
-        int id1 = subList.get(idx1).getIdSub();
-        int id2 = subList.get(idx2).getIdSub();
-
-        boolean ok = perbandinganDAO.hapus(id1, id2);
-        if (ok) {
-            JOptionPane.showMessageDialog(this, "Perbandingan berhasil dihapus!");
-            refreshTabel();
-        }
-    }
-
-    private void resetForm() {
-        if (tkriteria1.getItemCount() > 0) tkriteria1.setSelectedIndex(0);
-        if (tkriteria2.getItemCount() > 1) tkriteria2.setSelectedIndex(1);
-        if (tnilai.getItemCount() > 0) tnilai.setSelectedIndex(0);
+        refreshTabel();
     }
 
     private void refreshTabel() {
@@ -148,7 +126,6 @@ public class view_perbandingankriteria extends javax.swing.JPanel {
                     data[i][j + 1] = "1.000";
                 } else {
                     double val = matriks[i][j];
-                    // Tampilkan sebagai pecahan jika < 1
                     if (val < 1 && val > 0) {
                         int denom = (int) Math.round(1.0 / val);
                         data[i][j + 1] = "1/" + denom;
@@ -159,6 +136,11 @@ public class view_perbandingankriteria extends javax.swing.JPanel {
             }
         }
         tblmatriksperbandingankriteria.setModel(new DefaultTableModel(data, header));
+        tblmatriksperbandingankriteria.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        tblmatriksperbandingankriteria.getColumnModel().getColumn(0).setPreferredWidth(200);
+        for (int i = 1; i <= n; i++) {
+            tblmatriksperbandingankriteria.getColumnModel().getColumn(i).setPreferredWidth(60);
+        }
     }
 
     /**

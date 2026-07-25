@@ -39,7 +39,6 @@ public class vform_datasubkriteria extends javax.swing.JPanel {
         model.addColumn("Nama Kriteria");
         model.addColumn("Kode Sub");
         model.addColumn("Nama Sub");
-        model.addColumn("Bobot");
 
         SubKriteriaDAO dao = new SubKriteriaDAO();
 
@@ -54,8 +53,7 @@ public class vform_datasubkriteria extends javax.swing.JPanel {
                     rs.getInt("id_kriteria"),
                     rs.getString("nama_kriteria"),
                     rs.getString("kode_sub"),
-                    rs.getString("nama_sub"),
-                    rs.getDouble("bobot")
+                    rs.getString("nama_sub")
                 });
 
             }

@@ -22,13 +22,13 @@ public class view_datapelatih extends javax.swing.JPanel {
         initComponents();
         loadTablePelatih();
         generateKodePelatih();
-        tkode.disable();
+        tkode.setEnabled(false);
     }
 
     public view_datapelatih(String kode) {
         initComponents();
         loadTablePelatih();
-        tkode.disable();
+        tkode.setEnabled(false);
 
         models.Pelatih p = pelatihDAO.getByKode(kode);
         if (p != null) {
@@ -105,7 +105,7 @@ public class view_datapelatih extends javax.swing.JPanel {
         idPelatihTerpilih = -1;
         btnsimpan.setVisible(true);
         generateKodePelatih();
-        tkode.requestFocus();
+        tnama.requestFocus();
     }
 
     /**

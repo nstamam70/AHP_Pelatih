@@ -71,14 +71,13 @@ public class SubKriteriaDAO {
 
     public boolean insert(SubKriteria sub) {
 
-        String sql = "INSERT INTO sub_kriteria(id_kriteria, kode_sub, nama_sub, bobot) VALUES(?,?,?,?)";
+        String sql = "INSERT INTO sub_kriteria(id_kriteria, kode_sub, nama_sub) VALUES(?,?,?)";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, sub.getIdKriteria());
             ps.setString(2, sub.getKodeSub());
             ps.setString(3, sub.getNamaSub());
-            ps.setDouble(4, sub.getBobot());
 
             return ps.executeUpdate() > 0;
 
@@ -94,8 +93,7 @@ public class SubKriteriaDAO {
         String sql = "UPDATE sub_kriteria SET "
                 + "id_kriteria=?, "
                 + "kode_sub=?, "
-                + "nama_sub=?, "
-                + "bobot=? "
+                + "nama_sub=? "
                 + "WHERE id_sub=?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -103,8 +101,7 @@ public class SubKriteriaDAO {
             ps.setInt(1, sub.getIdKriteria());
             ps.setString(2, sub.getKodeSub());
             ps.setString(3, sub.getNamaSub());
-            ps.setDouble(4, sub.getBobot());
-            ps.setInt(5, sub.getIdSub());
+            ps.setInt(4, sub.getIdSub());
 
             return ps.executeUpdate() > 0;
 
@@ -162,8 +159,7 @@ public class SubKriteriaDAO {
                 + "s.id_kriteria, "
                 + "k.nama_kriteria, "
                 + "s.kode_sub, "
-                + "s.nama_sub, "
-                + "s.bobot "
+                + "s.nama_sub "
                 + "FROM sub_kriteria s "
                 + "INNER JOIN kriteria k "
                 + "ON s.id_kriteria = k.id_kriteria "
@@ -191,7 +187,6 @@ public class SubKriteriaDAO {
                     sub.setNamaKriteria(rs.getString("nama_kriteria"));
                     sub.setKodeSub(rs.getString("kode_sub"));
                     sub.setNamaSub(rs.getString("nama_sub"));
-                    sub.setBobot(rs.getDouble("bobot"));
 
                     list.add(sub);
                 }
@@ -209,7 +204,7 @@ public class SubKriteriaDAO {
 
         List<SubKriteria> list = new ArrayList<>();
 
-        String sql = "SELECT * FROM sub_kriteria WHERE id_kriteria=? ORDER BY bobot DESC";
+        String sql = "SELECT * FROM sub_kriteria WHERE id_kriteria=? ORDER BY kode_sub ASC";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -238,7 +233,6 @@ public class SubKriteriaDAO {
         sub.setIdKriteria(rs.getInt("id_kriteria"));
         sub.setKodeSub(rs.getString("kode_sub"));
         sub.setNamaSub(rs.getString("nama_sub"));
-        sub.setBobot(rs.getDouble("bobot"));
 
         return sub;
     }
@@ -250,8 +244,7 @@ public class SubKriteriaDAO {
                 + "k.id_kriteria, "
                 + "k.nama_kriteria, "
                 + "s.kode_sub, "
-                + "s.nama_sub, "
-                + "s.bobot "
+                + "s.nama_sub "
                 + "FROM sub_kriteria s "
                 + "INNER JOIN kriteria k "
                 + "ON s.id_kriteria = k.id_kriteria "

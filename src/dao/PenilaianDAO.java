@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import models.Penilaian;
@@ -275,4 +276,21 @@ public class PenilaianDAO {
 
         return p;
     }
+    
+    public ResultSet getDataPerbandinganAlternatif() {
+    String sql = "SELECT p.id_pelatih, p.kode_pelatih, p.nama_pelatih, "
+               + "k.id_kriteria, k.kode_kriteria, k.nama_kriteria, pn.nilai "
+               + "FROM penilaian pn "
+               + "JOIN pelatih p ON pn.id_pelatih = p.id_pelatih "
+               + "JOIN kriteria k ON pn.id_kriteria = k.id_kriteria "
+               + "ORDER BY p.nama_pelatih ASC, k.kode_kriteria ASC";
+    try {
+        Connection conn = KoneksiDB.getConnection();
+        Statement stmt = conn.createStatement();
+        return stmt.executeQuery(sql);
+    } catch (SQLException e) {
+        System.err.println("Error getDataPerbandinganAlternatif: " + e.getMessage());
+        return null;
+    }
+}
 }

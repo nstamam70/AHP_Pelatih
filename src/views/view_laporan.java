@@ -5,17 +5,19 @@
 package views;
 
 //import dao.AuditorDAO;
-//import dao.KriteriaDAO;
-//import dao.PerbandinganDAO;
-//import java.util.ArrayList;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
-//import models.Auditor;
-//import models.Kriteria;
-//import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
-//import utils.AHPCalculator;
-//import utils.ReportGenerator;
+import configs.KoneksiDB;
+import dao.PerbandinganAlternatifDAO;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
+import utils.AHPHelper;
+import utils.ReportGenerator;
 
 /**
  *
@@ -28,101 +30,45 @@ public class view_laporan extends javax.swing.JPanel {
      */
     public view_laporan() {
         initComponents();
-//        btnlaporanhasilahp.setText("Perbandingan Alternatif");
-//        btnlaporandatakriteria.addActionListener(e -> ReportGenerator.showReport("/reports/report_kriteria.jrxml"));
-//        btnlaporanperangkingan.addActionListener(e -> cetakLaporanPerangkingan());
-//        btnlaporanhasilahp.addActionListener(e -> cetakLaporanPerbandinganAlternatif());
-//        btnlaporandataauditor.addActionListener(e -> ReportGenerator.showReport("/reports/report_auditor.jrxml"));
+        btnlaporanperbandinganalternatif.setText("Perbandingan Alternatif");
+        btnlaporandatakriteria.addActionListener(e -> ReportGenerator.showReport("/reports/report_kriteria.jrxml"));
+        btnlaporanperangkingan.addActionListener(e -> ReportGenerator.showReport("/reports/report_perangkingan.jrxml"));
+        btnlaporanperbandinganalternatif.addActionListener(e -> cetakLaporanPerbandinganAlternatif());
+        btnlaporandatapelatih.addActionListener(e -> ReportGenerator.showReport("/reports/report_pelatih.jrxml"));
     }
-//
-//    private void cetakLaporanPerangkingan() {
-//        KriteriaDAO kriteriaDAO = new KriteriaDAO();
-//        AuditorDAO auditorDAO = new AuditorDAO();
-//        PerbandinganDAO perbandinganDAO = new PerbandinganDAO();
-//
-//        List<Kriteria> kriteriaList = kriteriaDAO.getAll();
-//        List<Auditor> auditorList = auditorDAO.getAll();
-//
-//        if (kriteriaList.isEmpty() || auditorList.isEmpty()) {
-//            javax.swing.JOptionPane.showMessageDialog(this, "Data kriteria atau auditor kosong!");
-//            return;
-//        }
-//
-//        int nKriteria = kriteriaList.size();
-//        int nAlternatif = auditorList.size();
-//
-//        double[][] matriksKriteria = perbandinganDAO.buildMatriksKriteria(kriteriaList);
-//        double[] bobotKriteria = AHPCalculator.hitungBobotPrioritas(matriksKriteria);
-//
-//        double[][] bobotAlternatif = new double[nKriteria][nAlternatif];
-//        for (int k = 0; k < nKriteria; k++) {
-//            int idKriteria = kriteriaList.get(k).getIdKriteria();
-//            double[][] matriksAlt = perbandinganDAO.buildMatriksAlternatif(idKriteria, auditorList);
-//            bobotAlternatif[k] = AHPCalculator.hitungBobotPrioritas(matriksAlt);
-//        }
-//
-//        double[] nilaiAkhir = AHPCalculator.hitungNilaiAkhir(bobotKriteria, bobotAlternatif);
-//        int[] rangking = AHPCalculator.getRangking(nilaiAkhir);
-//
-//        List<Map<String, ?>> dataList = new ArrayList<>();
-//        for (int rank = 0; rank < rangking.length; rank++) {
-//            int idx = rangking[rank];
-//            Map<String, Object> row = new HashMap<>();
-//            row.put("ranking", rank + 1);
-//            row.put("kode_auditor", auditorList.get(idx).getKodeAuditor());
-//            row.put("nama_auditor", auditorList.get(idx).getNamaAuditor());
-//            row.put("nilai_akhir", nilaiAkhir[idx]);
-//            row.put("persentase", String.format("%.1f%%", nilaiAkhir[idx] * 100));
-//            dataList.add(row);
-//        }
-//
-//        JRMapCollectionDataSource dataSource = new JRMapCollectionDataSource(dataList);
-//        ReportGenerator.showReportWithDataSource("/reports/report_perangkingan.jrxml", dataSource);
-//    }
-//
-//    private void cetakLaporanPerbandinganAlternatif() {
-//        KriteriaDAO kriteriaDAO = new KriteriaDAO();
-//        AuditorDAO auditorDAO = new AuditorDAO();
-//        PerbandinganDAO perbandinganDAO = new PerbandinganDAO();
-//
-//        List<Kriteria> kriteriaList = kriteriaDAO.getAll();
-//        List<Auditor> auditorList = auditorDAO.getAll();
-//
-//        if (kriteriaList.isEmpty() || auditorList.isEmpty()) {
-//            javax.swing.JOptionPane.showMessageDialog(this, "Data kriteria atau auditor kosong!");
-//            return;
-//        }
-//
-//        int nKriteria = kriteriaList.size();
-//        int nAlternatif = auditorList.size();
-//
-//        // Hitung bobot prioritas alternatif per kriteria
-//        double[][] bobotAlternatif = new double[nKriteria][nAlternatif];
-//        for (int k = 0; k < nKriteria; k++) {
-//            double[][] matriks = perbandinganDAO.buildMatriksAlternatif(kriteriaList.get(k).getIdKriteria(), auditorList);
-//            bobotAlternatif[k] = AHPCalculator.hitungBobotPrioritas(matriks);
-//        }
-//
-//        // Header kolom = nama kriteria
-//        Map<String, Object> params = new HashMap<>();
-//        for (int k = 0; k < nKriteria && k < 5; k++) {
-//            params.put("col" + (k + 1) + "_header", kriteriaList.get(k).getNamaKriteria());
-//        }
-//
-//        // Baris = alternatif, kolom = bobot per kriteria
-//        List<Map<String, ?>> dataList = new ArrayList<>();
-//        for (int i = 0; i < nAlternatif; i++) {
-//            Map<String, Object> row = new HashMap<>();
-//            row.put("alternatif", auditorList.get(i).getNamaAuditor());
-//            for (int k = 0; k < nKriteria && k < 5; k++) {
-//                row.put("col" + (k + 1), String.format("%.4f", bobotAlternatif[k][i]));
-//            }
-//            dataList.add(row);
-//        }
-//
-//        JRMapCollectionDataSource dataSource = new JRMapCollectionDataSource(dataList);
-//        ReportGenerator.showReportWithDataSource("/reports/report_perbandinganAlternatif.jrxml", params, dataSource);
-//    }
+
+    private void cetakLaporanPerbandinganAlternatif() {
+        PerbandinganAlternatifDAO pairwiseDAO = new PerbandinganAlternatifDAO();
+        List<Map<String, ?>> dataList = new ArrayList<>();
+        try {
+            ResultSet rs = pairwiseDAO.getDataPerbandinganAlternatif(); // method yang benar
+            if (rs == null) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Data perbandingan alternatif kosong!");
+                return;
+            }
+            int no = 1;
+            while (rs.next()) {
+                double nilai = rs.getDouble("nilai");
+                Map<String, Object> row = new HashMap<>();
+                row.put("no", no++);
+                row.put("alternatif1", rs.getString("alternatif1"));
+                row.put("alternatif2", rs.getString("alternatif2"));
+                row.put("nilai", String.format("%.4f", nilai));
+                row.put("keterangan", AHPHelper.getKeterangan(nilai));
+                dataList.add(row);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error baca data perbandingan alternatif: " + e.getMessage());
+            return;
+        }
+        if (dataList.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Data perbandingan alternatif kosong!");
+            return;
+        }
+        Map<String, Object> params = new HashMap<>();
+        JRMapCollectionDataSource dataSource = new JRMapCollectionDataSource(dataList);
+        ReportGenerator.showReportWithDataSource("/reports/report_perbandinganAlternatif.jrxml", params, dataSource);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -139,9 +85,9 @@ public class view_laporan extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         btnlaporandatakriteria = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        btnlaporandataauditor = new javax.swing.JButton();
+        btnlaporandatapelatih = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
-        btnlaporanhasilahp = new javax.swing.JButton();
+        btnlaporanperbandinganalternatif = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         btnlaporanperangkingan = new javax.swing.JButton();
 
@@ -171,14 +117,9 @@ public class view_laporan extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        btnlaporandataauditor.setBackground(new java.awt.Color(204, 204, 204));
-        btnlaporandataauditor.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
-        btnlaporandataauditor.setText("Laporan Data Auditor");
-        btnlaporandataauditor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnlaporandataauditorActionPerformed(evt);
-            }
-        });
+        btnlaporandatapelatih.setBackground(new java.awt.Color(204, 204, 204));
+        btnlaporandatapelatih.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
+        btnlaporandatapelatih.setText("Laporan Data Pelatih");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -186,20 +127,20 @@ public class view_laporan extends javax.swing.JPanel {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnlaporandataauditor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnlaporandatapelatih, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnlaporandataauditor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnlaporandatapelatih, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        btnlaporanhasilahp.setBackground(new java.awt.Color(204, 204, 204));
-        btnlaporanhasilahp.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
-        btnlaporanhasilahp.setText("Hasil Proses AHP");
+        btnlaporanperbandinganalternatif.setBackground(new java.awt.Color(204, 204, 204));
+        btnlaporanperbandinganalternatif.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
+        btnlaporanperbandinganalternatif.setText("Perbandingan Alternatif");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -207,14 +148,14 @@ public class view_laporan extends javax.swing.JPanel {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnlaporanhasilahp, javax.swing.GroupLayout.PREFERRED_SIZE, 536, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnlaporanperbandinganalternatif, javax.swing.GroupLayout.PREFERRED_SIZE, 536, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnlaporanhasilahp, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
+                .addComponent(btnlaporanperbandinganalternatif, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -293,16 +234,12 @@ public class view_laporan extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnlaporandataauditorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnlaporandataauditorActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnlaporandataauditorActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnlaporandataauditor;
     private javax.swing.JButton btnlaporandatakriteria;
-    private javax.swing.JButton btnlaporanhasilahp;
+    private javax.swing.JButton btnlaporandatapelatih;
     private javax.swing.JButton btnlaporanperangkingan;
+    private javax.swing.JButton btnlaporanperbandinganalternatif;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

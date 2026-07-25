@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import models.Pelatih;
 
@@ -47,6 +48,24 @@ public class PerbandinganAlternatifDAO {
     /**
      * Hapus perbandingan
      */
+    
+   public ResultSet getDataPerbandinganAlternatif() {
+    String sql = "SELECT pa.id_pairwise, "
+               + "p1.nama_pelatih AS alternatif1, "
+               + "p2.nama_pelatih AS alternatif2, "
+               + "pa.nilai "
+               + "FROM pairwise_alternatif pa "
+               + "JOIN pelatih p1 ON pa.id_pelatih1 = p1.id_pelatih "
+               + "JOIN pelatih p2 ON pa.id_pelatih2 = p2.id_pelatih "
+               + "ORDER BY pa.id_pairwise ASC";
+    try {
+        Statement stmt = conn.createStatement();
+        return stmt.executeQuery(sql);
+    } catch (SQLException e) {
+        System.err.println("Error getDataPerbandinganAlternatif: " + e.getMessage());
+        return null;
+    }
+}
     public boolean hapus(int idSub, int idPelatih1, int idPelatih2) {
         if (idPelatih1 > idPelatih2) {
             int tmp = idPelatih1;

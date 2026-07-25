@@ -4,6 +4,7 @@
  */
 package main;
 
+import auths.auth_login;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -290,7 +291,7 @@ public class Main extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Main().setVisible(true);
+                new auth_login().setVisible(true);
                 
               
             }

@@ -61,6 +61,32 @@ public class auth_login extends javax.swing.JFrame {
                 }
             }
         });
+
+        // Logo di sisi kiri form
+        javax.swing.JLabel logoLabel = new javax.swing.JLabel();
+        java.awt.Image logoImg = new javax.swing.ImageIcon(getClass().getResource("/assets/Logo.png")).getImage()
+            .getScaledInstance(300, 300, java.awt.Image.SCALE_SMOOTH);
+        logoLabel.setIcon(new javax.swing.ImageIcon(logoImg));
+
+        javax.swing.GroupLayout bg1Layout = new javax.swing.GroupLayout(background1);
+        background1.setLayout(bg1Layout);
+        bg1Layout.setHorizontalGroup(
+            bg1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bg1Layout.createSequentialGroup()
+                .addGap(150, 150, 150)
+                .addComponent(logoLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24))
+        );
+        bg1Layout.setVerticalGroup(
+            bg1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+            .addComponent(logoLabel)
+            .addGroup(bg1Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
     }
     
     /**
